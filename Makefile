@@ -8,3 +8,7 @@ start-dev:
 	poetry run python manage.py runserver 8000
 secretkey:
 	poetry run python -c 'from django.utils.crypto import get_random_string; print(get_random_string(40))'
+
+PORT ?= 8000
+start-production:
+	poetry run gunicorn -b 0.0.0.0:8000 task_manager.wsgi:application
