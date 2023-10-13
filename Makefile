@@ -11,4 +11,6 @@ secretkey:
 
 PORT ?= 8000
 start-production:
+	poetry run python manage.py makemigrations
+	poetry run python manage.py migrate
 	poetry run gunicorn -b 0.0.0.0:8000 task_manager.wsgi:application
