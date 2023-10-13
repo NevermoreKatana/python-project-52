@@ -10,6 +10,4 @@ secretkey:
 	poetry run python -c 'from django.utils.crypto import get_random_string; print(get_random_string(40))'
 
 start-production:
-	poetry run python manage.py makemigrations
-	poetry run python manage.py migrate
 	poetry run gunicorn -b 0.0.0.0:8000 task_manager.wsgi:application
