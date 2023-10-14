@@ -10,7 +10,7 @@
   </head>
 
 <body class="d-flex flex-column min-vh-100">
-    {% include "navigation.html" %}
+{% include "navigation.html" %}
     <div class="container wrapper flex-grow-1">
       {% if messages %}
         {% for message in messages %}
@@ -18,26 +18,44 @@
                 <div class="alert alert-success alert-dismissible fade show" role="alert">{{ message }}
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            {% elif "info" in message.tags %}
-                <div class="alert alert-info alert-dismissible fade show" role="alert">{{ message }}
+            {% elif "error" in message.tags %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">{{ message }}
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endif %}
         {% endfor %}
         {% endif %}
-    <div class="container wrapper flex-grow-1">
       <h1 class="my-4">
+Пользователи
       </h1>
-        <h1 class="my-4"></h1>
-        <div class="card">
-          <div class="card-body p-5 bg-light">
-            <div class="display-4">{% trans "Hello from Hexlet!" %}</div>
-            <p class="lead">{% trans "Practical programming courses" %}</p>
-          </div>
-        </div>
 
-    </div>
-    </div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Имя пользователя</th>
+      <th>Полное имя</th>
+      <th>Дата создания</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{u.id}}</td>
+        <td>{{u.username}}</td>
+        <td>{{u.first_name}} {{u.last_name}}</td>
+        <td>{{u.date_joined}}</td>
+        <td>
+          <a href="/users/{{u.id}}/update/">Изменить</a>
+          <br>
+          <a href="/users/{{u.id}}/delete/">Удалить</a>
+        </td>
+      </tr>
+      {% endfor %}
+
+  </tbody>
+</table>
+
 </body>
-
 </html>

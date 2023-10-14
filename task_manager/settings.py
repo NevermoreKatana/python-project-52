@@ -33,7 +33,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'task-manager-qvjg.onrender.com',
     'webserver',
-    '127.0.0.1',
     'localhost',
 ]
 
@@ -47,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bootstrap5',
+    'task_manager',
+    'task_manager.users'
 ]
 
 MIDDLEWARE = [
@@ -55,9 +56,12 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware',
+
 ]
 
 ROOT_URLCONF = 'task_manager.urls'
@@ -130,6 +134,7 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
