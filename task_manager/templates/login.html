@@ -12,9 +12,6 @@
 <body class="d-flex flex-column min-vh-100">
     {% include "navigation.html" %}
     <div class="container wrapper flex-grow-1">
-      <h1 class="my-4">
-    Вход
-      </h1>
         {% if messages %}
         {% for message in messages %}
             {% if "error" in message.tags %}
@@ -28,6 +25,10 @@
             {% endif %}
         {% endfor %}
         {% endif %}
+      <h1 class="my-4">
+    Вход
+      </h1>
+
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
