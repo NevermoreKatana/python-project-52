@@ -14,6 +14,8 @@ import os
 import dj_database_url
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
+import rollbar
+from rollbar.contrib.django.middleware import RollbarNotifierMiddleware
 
 
 dotenv.load_dotenv()
@@ -28,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'true').lower() in {'yes', '1', 'true'}
 
 ALLOWED_HOSTS = [
     'task-manager-qvjg.onrender.com',
@@ -64,8 +66,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.RemoteUserMiddleware',
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 
 ]
+
+ROLLBAR = {
+    'access_token': os.getenv('TOKEN'),
+    'environment': 'development' if DEBUG else 'production',
+    'code_version': '1.0',
+    'root': BASE_DIR,
+}
 
 ROOT_URLCONF = 'task_manager.urls'
 TEMPLATES = [

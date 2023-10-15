@@ -9,6 +9,9 @@ from django.contrib import messages
 from task_manager.statuses.models import Status
 from task_manager.tasks.models import Tasks
 from task_manager.labels.models import Labels
+import rollbar
+
+
 class IndexView(View):
 
     def get(self, request, *args, **kwargs):
@@ -18,8 +21,10 @@ class IndexView(View):
             statuses = Status.objects.all()
             users = User.objects.all()
             labels = Labels.objects.all()
+            rollbar.report_exc_info()
             return render(request, 'tasks/index.html', {'is_session_active':is_session_active, 'tasks':tasks, 'statuses':statuses,'users':users,'labels':labels })
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return redirect('login')
 
 
@@ -32,8 +37,10 @@ class TasksCreateView(View):
             user = User.objects.values('id', 'first_name', 'last_name')
             user = list(user)
             labels = Labels.objects.all()
+            rollbar.report_exc_info()
             return render(request, 'tasks/create.html', {'is_session_active': is_session_active, 'statuses': statuses, 'user':user, 'labels':labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return redirect('login')
 
     def post(self, request, *args, **kwargs):
@@ -52,6 +59,7 @@ class TasksCreateView(View):
         for label_id in labels:
             label = Labels.objects.get(id=label_id)
             task.labels.add(label)
+        rollbar.report_exc_info()
         return redirect('tasks_index')
 
 
@@ -64,10 +72,12 @@ class TasksDeleteView(View):
             task = Tasks.objects.values('name', 'author').filter(id=task_id)
             if request.session.get('user_id') != task[0]['author']:
                 messages.error(request, 'Задачу может удалить только ее автор')
+                rollbar.report_exc_info()
                 return redirect('tasks_index')
             task = list(task)
+            rollbar.report_exc_info()
             return render(request, 'tasks/delete.html', {'is_session_active': is_session_active, 'task': task[0]})
-
+        rollbar.report_exc_info()
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         return redirect('login')
 
@@ -78,6 +88,7 @@ class TasksDeleteView(View):
         if task:
             task.delete()
             messages.success(request, 'Задача успешно удалена')
+            rollbar.report_exc_info()
             return redirect('tasks_index')
 
 
@@ -92,8 +103,10 @@ class UpdateStatusView(View):
             user = list(user)
             labels = Labels.objects.all()
             task = Tasks.objects.get(id=task_id)
+            rollbar.report_exc_info()
             return render(request, 'tasks/update.html', {'is_session_active': is_session_active, 'statuses':statuses, 'user':user, 'task':task,'labels':labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return redirect('login')
 
     def post(self, request, *args, **kwargs):
@@ -116,6 +129,7 @@ class UpdateStatusView(View):
             task.labels.add(label)
 
         messages.success(request, 'Задача успешно изменена')
+        rollbar.report_exc_info()
         return redirect('tasks_index')
 
 
@@ -126,6 +140,8 @@ class TaskView(View):
         task_id = kwargs.get('pk')
         if is_session_active:
             tasks = Tasks.objects.get(id=task_id)
+            rollbar.report_exc_info()
             return render(request, 'tasks/task.html', {'is_session_active':is_session_active, 'tasks':tasks})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return redirect('login')
