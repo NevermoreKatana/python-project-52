@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from task_manager.validator import password_validate
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-
+from task_manager.tasks.models import Tasks
 
 class UserView(View):
 
@@ -52,7 +52,6 @@ class UserDeleteView(View):
         if request.session.get('user_id') is user_id:
             user = User.objects.values('first_name', 'last_name').filter(id=user_id)
             user = list(user)
-            messages.success(request, 'Пользователь успешно удален')
             return render(request, 'users/delete.html', {'is_session_active': is_session_active, 'user': user[0]})
         elif not is_session_active:
             messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
@@ -63,10 +62,14 @@ class UserDeleteView(View):
     def post(self, request, *args, **kwargs):
         user_id = kwargs.get('pk')
         user = User.objects.get(id=user_id)
-        if user:
-            user.delete()
-            logout(request)
+        if Tasks.objects.filter(executor=user) or Tasks.objects.filter(author=user):
+            messages.error(request, 'Невозможно удалить пользователя, потому что он используется')
             return redirect('users_index')
+        user.delete()
+        messages.success(request, 'Пользователь успешно удален')
+        logout(request)
+        return redirect('users_index')
+
 
 
 class UserUpdateView(View):
