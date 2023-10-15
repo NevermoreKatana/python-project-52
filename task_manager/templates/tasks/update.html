@@ -48,7 +48,11 @@
     <div class="mb-3">
         <label class="form-label" for="id_labels">Метки</label>
         <select name="labels" class="form-select" id="id_labels" multiple="">
-  <option value="6">оч важноеo</option>
+            {% for label in labels %}
+        <option value="{{ label.id }}" {% if label.id == task.labels.id %}selected{% endif %}>
+            {{ label.name }}
+        </option>
+            {% endfor %}
 </select>
     </div>
     <input class="btn btn-primary" type="submit" value="Создать">
