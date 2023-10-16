@@ -56,6 +56,7 @@ class TasksCreateView(View):
             label = Labels.objects.get(id=label_id)
             task.labels.add(label)
         rollbar.report_exc_info()
+        messages.success(request, 'Задача успешно создана')
         return redirect('tasks_index')
 
 
@@ -82,7 +83,7 @@ class TasksDeleteView(View):
         task = Tasks.objects.get(id=task_id)
         if task:
             task.delete()
-            messages.success(request, 'Задача успешно удалена')
+            messages.error(request, 'Задача успешно удалена')
             rollbar.report_exc_info()
             return redirect('tasks_index')
 
