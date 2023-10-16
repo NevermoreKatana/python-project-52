@@ -21,7 +21,9 @@ class UserView(View):
             user['date_joined'] = user['date_joined'].strftime('%d.%m.%Y %H:%M')
             formatted_users.append(user)
         rollbar.report_exc_info()
-        return render(request, 'users/index.html', {'users': formatted_users, 'is_session_active': is_session_active})
+        return render(request, 'users/index.html',
+                      {'users': formatted_users,
+                       'is_session_active': is_session_active})
 
 
 class UserCreateView(View):
@@ -57,7 +59,9 @@ class UserDeleteView(View):
             user = User.objects.values('first_name', 'last_name').filter(id=user_id)
             user = list(user)
             rollbar.report_exc_info()
-            return render(request, 'users/delete.html', {'is_session_active': is_session_active, 'user': user[0]})
+            return render(request, 'users/delete.html',
+                          {'is_session_active': is_session_active,
+                           'user': user[0]})
         elif not is_session_active:
             messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
             rollbar.report_exc_info()
@@ -90,7 +94,9 @@ class UserUpdateView(View):
             user = list(user)
             messages.success(request, 'Пользователь успешно изменен')
             rollbar.report_exc_info()
-            return render(request, 'users/update.html', {'is_session_active': is_session_active, 'user': user[0]})
+            return render(request, 'users/update.html',
+                          {'is_session_active': is_session_active,
+                           'user': user[0]})
         elif not is_session_active:
             messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
             rollbar.report_exc_info()

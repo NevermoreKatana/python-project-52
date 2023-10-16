@@ -12,7 +12,9 @@ class IndexView(View):
         if is_session_active:
             statuses = Status.objects.all()
             rollbar.report_exc_info()
-            return render(request, 'statuses/index.html', {'is_session_active': is_session_active, 'statuses': statuses})
+            return render(request, 'statuses/index.html',
+                          {'is_session_active': is_session_active,
+                           'statuses': statuses})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -47,7 +49,9 @@ class UpdateStatusView(View):
             status_id = kwargs.get('pk')
             status = Status.objects.get(id=status_id)
             rollbar.report_exc_info()
-            return render(request, 'statuses/update.html', {'is_session_active': is_session_active, 'status': status})
+            return render(request, 'statuses/update.html',
+                          {'is_session_active': is_session_active,
+                           'status': status})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -71,7 +75,9 @@ class DeleteStatusView(View):
             status_id = kwargs.get('pk')
             status = Status.objects.get(id=status_id)
             rollbar.report_exc_info()
-            return render(request, 'statuses/delete.html', {'is_session_active': is_session_active, 'status': status})
+            return render(request, 'statuses/delete.html',
+                          {'is_session_active': is_session_active,
+                           'status': status})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')

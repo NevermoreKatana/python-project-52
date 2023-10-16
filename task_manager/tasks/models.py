@@ -10,5 +10,6 @@ class Tasks(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     executor = models.ForeignKey(User, on_delete=models.CASCADE)
     labels = models.ManyToManyField(Labels)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='authored_tasks', default=1)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='authored_tasks', default=1)
     create_at = models.DateTimeField(auto_now_add=True)

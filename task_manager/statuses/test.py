@@ -34,12 +34,16 @@ class StatusCRUDTests(TestCase):
 
     def test_update_status_view_authenticated(self):
         self.client.login(username='testuser', password='testpassword')
-        response = self.client.post(reverse('update_status', args=[self.status.id]), {'name': 'Updated Status'})
+        response = self.client.post(reverse('update_status',
+                                            args=[self.status.id]),
+                                    {'name': 'Updated Status'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Status.objects.get(id=self.status.id).name, 'Updated Status')
 
     def test_update_status_view_unauthenticated(self):
-        response = self.client.post(reverse('update_status', args=[self.status.id]), {'name': 'Updated Status'})
+        response = self.client.post(reverse('update_status',
+                                            args=[self.status.id]),
+                                    {'name': 'Updated Status'})
         self.assertEqual(response.status_code, 302)
 
     def test_delete_status_view_authenticated(self):

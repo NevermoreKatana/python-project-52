@@ -13,7 +13,9 @@ class LabelsView(View):
         if is_session_active:
             labels = list(Labels.objects.all())
             rollbar.report_exc_info()
-            return render(request, 'labels/index.html', {'is_session_active': is_session_active, 'labels': labels})
+            return render(request, 'labels/index.html',
+                          {'is_session_active': is_session_active,
+                           'labels': labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -49,7 +51,9 @@ class LabelsDeleteView(View):
             label = Labels.objects.values('name').filter(id=task_id)
             label = list(label)
             rollbar.report_exc_info()
-            return render(request, 'labels/delete.html', {'is_session_active': is_session_active, 'label': label[0]})
+            return render(request, 'labels/delete.html',
+                          {'is_session_active': is_session_active,
+                           'label': label[0]})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -76,7 +80,9 @@ class LabelsUpdateView(View):
             label_id = kwargs.get('pk')
             label = Labels.objects.get(id=label_id)
             rollbar.report_exc_info()
-            return render(request, 'labels/update.html', {'is_session_active': is_session_active, 'label': label})
+            return render(request, 'labels/update.html',
+                          {'is_session_active': is_session_active,
+                           'label': label})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')

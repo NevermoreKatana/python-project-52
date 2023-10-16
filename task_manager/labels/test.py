@@ -39,7 +39,9 @@ class LabelsCRUDTests(TestCase):
 
     def test_labels_update_view_post_authenticated(self):
         self.client.login(username="testuser", password="testpassword")
-        response = self.client.post(reverse('labels_update', args=[self.label.id]), {'name': 'Updated Label'})
+        response = self.client.post(reverse('labels_update',
+                                            args=[self.label.id]),
+                                    {'name': 'Updated Label'})
         self.assertEqual(response.status_code, 302)
         updated_label = Labels.objects.get(id=self.label.id)
         self.assertEqual(updated_label.name, 'Updated Label')

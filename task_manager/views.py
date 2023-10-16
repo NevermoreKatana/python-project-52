@@ -31,7 +31,8 @@ class LoginView(View):
             messages.success(request, 'Вы залогинены')
             rollbar.report_exc_info()
             return redirect('main')
-        messages.info(request, 'Пожалуйста, введите правильные имя пользователя и пароль. Оба поля могут быть чувствительны к регистру.')
+        messages.info(request, 'Пожалуйста, введите правильные имя пользователя и пароль.'
+                               ' Оба поля могут быть чувствительны к регистру.')
         rollbar.report_exc_info()
         return render(request, 'login.html', {'username': username})
 
