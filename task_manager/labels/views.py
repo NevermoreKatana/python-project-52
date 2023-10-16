@@ -36,6 +36,7 @@ class LabelsCreateView(View):
         task.name = name
         task.save()
         rollbar.report_exc_info()
+        messages.success(request, 'Метка успешно создана')
         return redirect('labels_index')
 
 
