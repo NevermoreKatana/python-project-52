@@ -35,6 +35,7 @@ class CreateStatusView(View):
         status.name = name
         status.save()
         rollbar.report_exc_info()
+        messages.success(request, 'Статус успешно создан')
         return redirect('statuses_index')
 
 
