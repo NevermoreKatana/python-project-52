@@ -17,11 +17,33 @@ class IndexView(View):
             statuses = Status.objects.all()
             users = User.objects.all()
             labels = Labels.objects.all()
-            rollbar.report_exc_info()
-            return render(request, 'tasks/index.html', {'is_session_active': is_session_active, 'tasks': tasks, 'statuses': statuses, 'users': users, 'labels': labels})
+
+            status_id = request.GET.get('status')
+            executor_id = request.GET.get('executor')
+            label_id = request.GET.get('label')
+            self_tasks = request.GET.get('self_tasks')
+
+            if status_id:
+                tasks = tasks.filter(status__id=status_id)
+            if executor_id:
+                tasks = tasks.filter(executor__id=executor_id)
+            if label_id:
+                tasks = tasks.filter(labels__id=label_id)
+            if self_tasks:
+                tasks = tasks.filter(author=request.user)
+
+            return render(request, 'tasks/index.html', {
+                'is_session_active': is_session_active,
+                'tasks': tasks,
+                'statuses': statuses,
+                'users': users,
+                'labels': labels,
+            })
+
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
         return redirect('login')
+
+
 
 
 class TasksCreateView(View):
