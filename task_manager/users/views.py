@@ -40,11 +40,11 @@ class UserCreateView(View):
         if password_validate(password1, password2):
             user = User.objects.create_user(username=username, password=password1)
             user.save()
-
             user.first_name = name
             user.last_name = surname
             user.save()
             rollbar.report_exc_info()
+            messages.success(request, 'Пользователь успешно зарегистрирован')
             return redirect('login')
 
 
