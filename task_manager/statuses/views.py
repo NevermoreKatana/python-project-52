@@ -81,4 +81,5 @@ class DeleteStatusView(View):
         status = Status.objects.get(id=status_id)
         status.delete()
         rollbar.report_exc_info()
+        messages.error(request, 'Статус успешно удален')
         return redirect('statuses_index')

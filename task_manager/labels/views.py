@@ -63,7 +63,7 @@ class LabelsDeleteView(View):
             return redirect('labels_index')
 
         label.delete()
-        messages.success(request, 'Метка успешно удалена')
+        messages.error(request, 'Метка успешно удалена')
         rollbar.report_exc_info()
         return redirect('labels_index')
 
@@ -87,6 +87,6 @@ class LabelsUpdateView(View):
         task = Labels.objects.get(id=status_id)
         task.name = name
         task.save()
-        messages.success(request, 'Задача успешно изменена')
+        messages.success(request, 'Метка успешно изменена')
         rollbar.report_exc_info()
         return redirect('labels_index')
