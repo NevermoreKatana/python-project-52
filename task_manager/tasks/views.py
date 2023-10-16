@@ -29,6 +29,7 @@ class IndexView(View):
                 tasks = tasks.filter(executor__id=executor_id)
             if label_id:
                 tasks = tasks.filter(labels__id=label_id)
+
             if self_tasks:
                 tasks = tasks.filter(author=request.user)
 
@@ -42,7 +43,6 @@ class IndexView(View):
 
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         return redirect('login')
-
 
 
 
