@@ -59,6 +59,7 @@ class UpdateStatusView(View):
         status.name = name
         status.save()
         rollbar.report_exc_info()
+        messages.success(request, 'Статус успешно изменен')
         return redirect('statuses_index')
 
 
