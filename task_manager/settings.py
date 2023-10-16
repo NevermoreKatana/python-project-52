@@ -14,8 +14,6 @@ import os
 import dj_database_url
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
-import rollbar
-from rollbar.contrib.django.middleware import RollbarNotifierMiddleware
 
 
 dotenv.load_dotenv()

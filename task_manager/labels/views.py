@@ -5,6 +5,7 @@ from task_manager.labels.models import Labels
 from task_manager.tasks.models import Tasks
 import rollbar
 
+
 class LabelsView(View):
 
     def get(self, request, *args, **kwargs):
@@ -12,7 +13,7 @@ class LabelsView(View):
         if is_session_active:
             labels = list(Labels.objects.all())
             rollbar.report_exc_info()
-            return render(request, 'labels/index.html', {'is_session_active': is_session_active, 'labels':labels})
+            return render(request, 'labels/index.html', {'is_session_active': is_session_active, 'labels': labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -24,8 +25,8 @@ class LabelsCreateView(View):
         is_session_active = 'user_id' in request.session
         if is_session_active:
             rollbar.report_exc_info()
-            return render(request, 'labels/create.html', {'is_session_active':is_session_active})
-        messages.error(request,'Вы не авторизованы! Пожалуйста, выполните вход.')
+            return render(request, 'labels/create.html', {'is_session_active': is_session_active})
+        messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
 
@@ -74,7 +75,7 @@ class LabelsUpdateView(View):
             label_id = kwargs.get('pk')
             label = Labels.objects.get(id=label_id)
             rollbar.report_exc_info()
-            return render(request, 'labels/update.html', {'is_session_active': is_session_active, 'label':label})
+            return render(request, 'labels/update.html', {'is_session_active': is_session_active, 'label': label})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')

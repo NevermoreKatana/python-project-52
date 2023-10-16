@@ -2,8 +2,9 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test import Client
 from django.urls import reverse
-from task_manager.tasks.models import Tasks
 from task_manager.labels.models import Labels
+
+
 class LabelsCRUDTests(TestCase):
     def setUp(self):
         self.client = Client()
@@ -23,6 +24,7 @@ class LabelsCRUDTests(TestCase):
     def test_labels_create_view_unauthenticated(self):
         response = self.client.get(reverse('labels_create'))
         self.assertEqual(response.status_code, 302)
+
     def test_labels_delete_view_unauthenticated(self):
         response = self.client.get(reverse('labels_delete', args=[self.label.id]))
         self.assertEqual(response.status_code, 302)
@@ -41,4 +43,3 @@ class LabelsCRUDTests(TestCase):
         self.assertEqual(response.status_code, 302)
         updated_label = Labels.objects.get(id=self.label.id)
         self.assertEqual(updated_label.name, 'Updated Label')
-

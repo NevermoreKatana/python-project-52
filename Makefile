@@ -18,3 +18,5 @@ make-migrate:
 	poetry run python manage.py makemigrations
 test:
 	poetry run python manage.py test
+make lint:
+	poetry run flake8 task_manager

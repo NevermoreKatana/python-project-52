@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from task_manager.validator import password_validate
@@ -8,6 +7,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from task_manager.tasks.models import Tasks
 import rollbar
+
+
 class UserView(View):
 
     def get(self, request, *args, **kwargs):
@@ -20,7 +21,7 @@ class UserView(View):
             user['date_joined'] = user['date_joined'].strftime('%d.%m.%Y %H:%M')
             formatted_users.append(user)
         rollbar.report_exc_info()
-        return render(request, 'users/index.html', {'users': formatted_users, 'is_session_active':is_session_active})
+        return render(request, 'users/index.html', {'users': formatted_users, 'is_session_active': is_session_active})
 
 
 class UserCreateView(View):
@@ -28,7 +29,7 @@ class UserCreateView(View):
     def get(self, request, *args, **kwargs):
         is_session_active = 'user_id' in request.session
         rollbar.report_exc_info()
-        return render(request, 'users/create.html', {'is_session_active':is_session_active})
+        return render(request, 'users/create.html', {'is_session_active': is_session_active})
 
     def post(self, request, *args, **kwargs):
         name = request.POST.get('first_name')
@@ -77,7 +78,6 @@ class UserDeleteView(View):
         logout(request)
         rollbar.report_exc_info()
         return redirect('users_index')
-
 
 
 class UserUpdateView(View):

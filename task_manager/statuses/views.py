@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from task_manager.statuses.models import Status
-from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 import rollbar
 
@@ -26,7 +25,7 @@ class CreateStatusView(View):
         if is_session_active:
             rollbar.report_exc_info()
             return render(request, 'statuses/create.html', {'is_session_active': is_session_active})
-        messages.error(request,'Вы не авторизованы! Пожалуйста, выполните вход.')
+        messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
 
@@ -47,7 +46,7 @@ class UpdateStatusView(View):
             status_id = kwargs.get('pk')
             status = Status.objects.get(id=status_id)
             rollbar.report_exc_info()
-            return render(request, 'statuses/update.html', {'is_session_active': is_session_active, 'status':status})
+            return render(request, 'statuses/update.html', {'is_session_active': is_session_active, 'status': status})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')

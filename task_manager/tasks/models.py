@@ -3,6 +3,7 @@ from task_manager.statuses.models import Status
 from django.contrib.auth.models import User
 from task_manager.labels.models import Labels
 
+
 class Tasks(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)

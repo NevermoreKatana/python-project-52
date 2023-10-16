@@ -4,20 +4,19 @@ from django.contrib.auth.models import User
 from task_manager.statuses.models import Status
 from django.test import Client
 
+
 class StatusCRUDTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpassword")
         self.status = Status.objects.create(name="Test Status")
 
-
-    #Ваще хер его знает почему он не проходит емае LERN IT, IT NICE METHOD
+    # Ваще хер его знает почему он не проходит емае LERN IT, IT NICE METHOD
     def test_index_view_authenticated(self):
         self.client.login(username='testuser', password='testpassword')
         response = self.client.get(reverse('statuses_index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Test Status")
-
 
     def test_index_view_unauthenticated(self):
         response = self.client.get(reverse('statuses_index'))

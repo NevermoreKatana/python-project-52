@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.test import Client
 
+
 class UserCRUDTests(TestCase):
     def setUp(self):
         self.client = Client()

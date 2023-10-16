@@ -1,10 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.utils import timezone
 from django.contrib.auth.models import User
-from django.contrib.auth import logout
-from task_manager.validator import password_validate
-from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from task_manager.statuses.models import Status
 from task_manager.tasks.models import Tasks
@@ -22,7 +18,7 @@ class IndexView(View):
             users = User.objects.all()
             labels = Labels.objects.all()
             rollbar.report_exc_info()
-            return render(request, 'tasks/index.html', {'is_session_active':is_session_active, 'tasks':tasks, 'statuses':statuses,'users':users,'labels':labels })
+            return render(request, 'tasks/index.html', {'is_session_active': is_session_active, 'tasks': tasks, 'statuses': statuses, 'users': users, 'labels': labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -38,7 +34,7 @@ class TasksCreateView(View):
             user = list(user)
             labels = Labels.objects.all()
             rollbar.report_exc_info()
-            return render(request, 'tasks/create.html', {'is_session_active': is_session_active, 'statuses': statuses, 'user':user, 'labels':labels})
+            return render(request, 'tasks/create.html', {'is_session_active': is_session_active, 'statuses': statuses, 'user': user, 'labels': labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -81,7 +77,6 @@ class TasksDeleteView(View):
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         return redirect('login')
 
-
     def post(self, request, *args, **kwargs):
         task_id = kwargs.get('pk')
         task = Tasks.objects.get(id=task_id)
@@ -104,7 +99,7 @@ class UpdateStatusView(View):
             labels = Labels.objects.all()
             task = Tasks.objects.get(id=task_id)
             rollbar.report_exc_info()
-            return render(request, 'tasks/update.html', {'is_session_active': is_session_active, 'statuses':statuses, 'user':user, 'task':task,'labels':labels})
+            return render(request, 'tasks/update.html', {'is_session_active': is_session_active, 'statuses': statuses, 'user': user, 'task': task, 'labels': labels})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')
@@ -141,7 +136,7 @@ class TaskView(View):
         if is_session_active:
             tasks = Tasks.objects.get(id=task_id)
             rollbar.report_exc_info()
-            return render(request, 'tasks/task.html', {'is_session_active':is_session_active, 'tasks':tasks})
+            return render(request, 'tasks/task.html', {'is_session_active': is_session_active, 'tasks': tasks})
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return redirect('login')

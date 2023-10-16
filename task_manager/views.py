@@ -3,13 +3,14 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 import rollbar
+
+
 class IndexView(View):
 
     def get(self, request, *args, **kwargs):
         is_session_active = 'user_id' in request.session
         rollbar.report_exc_info()
         return render(request, 'index.html', {'is_session_active': is_session_active})
-
 
 
 class LoginView(View):
