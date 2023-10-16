@@ -39,6 +39,10 @@ class IndexView(View):
                 'statuses': statuses,
                 'users': users,
                 'labels': labels,
+                'status_id': int(status_id) if status_id else status_id,
+                'executor_id': int(executor_id) if executor_id else executor_id,
+                'label_id': int(label_id) if label_id else label_id,
+                'self_tasks': self_tasks,
             })
 
         messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
