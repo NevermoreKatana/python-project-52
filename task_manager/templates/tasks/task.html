@@ -25,11 +25,11 @@
     <div class="container">
       <div class="row p-1">
         <div class="col">Автор</div>
-        <div class="col">{{tasks.author}}</div>
+        <div class="col">{{tasks.author.first_name}} {{tasks.author.last_name}}</div>
       </div>
       <div class="row p-1">
         <div class="col">Исполнитель</div>
-        <div class="col">{{tasks.executor}}</div>
+        <div class="col">{{tasks.executor.first_name}} {{tasks.executor.last_name}}</div>
       </div>
       <div class="row p-1">
         <div class="col">Статус</div>
