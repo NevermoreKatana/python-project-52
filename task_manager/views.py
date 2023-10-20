@@ -27,7 +27,8 @@ class LoginView(View):
         if services.login_user(form, request):
             return services.handle_success(request, 'Вы залогинены', 'main')
         initial_data = services.initial_login_data(form)
-        form = LoginForm(initial_data)
+        form = LoginForm(initial_data, is_valid=True)
+
         messages.info(request, 'Пожалуйста, введите правильные имя пользователя и пароль.'
                                '     Оба поля могут быть чувствительны к регистру.')
         rollbar.report_exc_info()

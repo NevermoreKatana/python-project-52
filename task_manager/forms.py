@@ -12,7 +12,14 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         label='Пароль',
         widget=forms.PasswordInput(attrs={
-            'class': 'form-control {% if messages %}{% for message in messages %}{% if "info" in message.tags %}is-valid{% endif %}{% endfor %}{% endif %}',
+            'class': 'form-control',
             'placeholder': 'Пароль',
             'required': 'required'}),
     )
+
+    def __init__(self, *args, **kwargs):
+        is_valid = kwargs.pop('is_valid', False)
+        super(LoginForm, self).__init__(*args, **kwargs)
+        if is_valid:
+            self.fields['username'].widget.attrs['class'] += ' is-valid'
+            self.fields['password'].widget.attrs['class'] += ' is-valid'
