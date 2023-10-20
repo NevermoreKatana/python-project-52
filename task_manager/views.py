@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views import View
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.contrib import messages
 import rollbar
 from task_manager.forms import LoginForm
 from task_manager import services
+
 
 class IndexView(View):
 
@@ -20,7 +21,7 @@ class LoginView(View):
         is_session_active = 'user_id' in request.session
         rollbar.report_exc_info()
         form = LoginForm()
-        return render(request, 'login.html', {'is_session_active': is_session_active, 'form':form})
+        return render(request, 'login.html', {'is_session_active': is_session_active, 'form': form})
 
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
@@ -39,6 +40,4 @@ class LogoutView(View):
 
     def post(self, request, *args, **kwargs):
         logout(request)
-        messages.info(request, 'Вы разлогинены')
-        rollbar.report_exc_info()
-        return redirect('main')
+        return services.handle_info(request, 'Вы разлогинены', 'main')

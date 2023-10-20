@@ -79,4 +79,3 @@ def initial_user_data(user_data):
         'username': user_data['username'],
     }
     return initial_data
-
