@@ -74,5 +74,5 @@ class DeleteStatusView(View):
     def post(self, request, *args, **kwargs):
 
         status_id = kwargs.get('pk')
-        if services.delete_status(status_id):
-            handle_success(request, 'Статус успешно удален', 'statuses_index')
+        services.delete_status(status_id)
+        return handle_success(request, 'Статус успешно удален', 'statuses_index')
