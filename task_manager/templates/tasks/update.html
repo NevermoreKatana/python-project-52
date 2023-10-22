@@ -16,44 +16,21 @@
       </h1>
 <form method="post">
   {% csrf_token %}
-  <div class="mb-3">
-      <label class="form-label" for="id_name">Имя</label>
-      <input type="text" name="name" maxlength="150" class="form-control" placeholder="Имя" required id="id_name" value="{{task.name}}">
-  </div>
-    <div class="mb-3">
-        <label class="form-label" for="id_description">Описание</label>
-        <textarea name="description" cols="40" rows="10" class="form-control" placeholder="Описание" id="id_description">{{task.description}}</textarea>
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="id_status">Статус</label>
-        <select name="status" class="form-select" required id="id_status">
-        {% for status in statuses %}
-            <option value="{{status.id}}" {% if status.id == task.status.id  %} selected {% endif %}>{{status.name}}</option>
-        {% endfor %}
-</select>
-    </div>
-    <div class="mb-3">
-        <label class="form-label" for="id_executor">Исполнитель</label>
-        <select name="executor" class="form-select" id="id_executor">
-        {% for u in user %}
-            <option value="{{u.id}}" {% if u.id == task.executor.id  %} selected {% endif %}>{{u.first_name}} {{u.last_name}}</option>
-        {% endfor %}
-</select>
-    </div>
-        <div class="mb-3">
-            <label class="form-label" for="id_labels">Метки</label>
-            <select name="labels" class="form-select" id="id_labels" multiple>
-                {% for label in labels %}
-                    <option value="{{ label.id }}"
-                        {% if label in task.labels.all %}
-                            selected
-                        {% endif %}>
-                        {{ label.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-    <input class="btn btn-primary" type="submit" value="Изменить">
+  {{ form.name.label_tag }}
+  {{ form.name }}
+  <br>
+  {{ form.description.label_tag }}
+  {{ form.description }}
+  <br>
+  {{ form.status.label_tag }}
+  {{form.status}}
+  <br>
+  {{ form.executor.label_tag }}
+  {{form.executor }}
+  <br>
+  {{ form.labels.label_tag }}
+  {{form.labels}}
+  <br>
+  <input class="btn btn-primary" type="submit" value="Создать">
 </form>
-
 </body>

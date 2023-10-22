@@ -27,45 +27,31 @@
       <h1 class="my-4">
 Задачи
       </h1>
+
 <a class="nav-link" href="{% url 'tasks_create' %}">Создать задачу</a>
 <div class="card mb-3">
   <div class="card-body bg-light">
     <form class="form-inline center" method="get">
-      <div class="mb-3">
-          <label class="form-label" for="id_status">Статус</label>
-          <select name="status" class="form-select {% if request.GET.status or request.GET.executor or request.GET.label or request.GET.self_tasks %}is-valid{% endif %}" id="id_status">
-            <option value="" {% if not status_id %} selected {% endif %}>---------</option>
-          {% for status in statuses %}
-            <option value="{{status.id}}" {% if status_id == status.id %} selected {% endif %}>{{status.name}}</option>
-        {% endfor %}
-
-</select>
-      </div>
-      <div class="mb-3">
-          <label class="form-label" for="id_executor">Исполнитель</label>
-          <select name="executor" class="form-select {% if request.GET.status or request.GET.executor or request.GET.label or request.GET.self_tasks %}is-valid{% endif %}" id="id_executor">
-              <option value="" {% if not executor_id %}selected{% endif %}>---------</option>
-          {% for u in users %}
-            <option value="{{u.id}}" {% if executor_id == u.id %}selected{% endif %}>{{u.first_name}} {{u.last_name}}</option>
-        {% endfor %}
-
-</select></div>
-      <div class="mb-3"><label class="form-label" for="id_label">Метка</label>
-          <select name="label" class="form-select {% if request.GET.status or request.GET.executor or request.GET.label or request.GET.self_tasks %}is-valid{% endif %}" id="id_label">
-            <option value="" {% if not label_id %}selected{% endif %}>---------</option>
-          {% for label in labels %}
-            <option value="{{label.id}}" {% if label_id == label.id %}selected{% endif %}>{{label.name}}</option>
-        {% endfor %}
-</select>
-      </div>
-      <div class="mb-3">
+    <div class="mb-3">
+        {{ form.status.label_tag }}
+        {{ form.status }}
+    </div>
+    <div class="mb-3">
+        {{ form.executor.label_tag }}
+        {{ form.executor }}
+    </div>
+    <div class="mb-3">
+        {{ form.label.label_tag }}
+        {{ form.label }}
+    </div>
+    <div class="mb-3">
         <div class="form-check">
-            <input type="checkbox" name="self_tasks" class="form-check-input {% if request.GET.status or request.GET.executor or request.GET.label or self_tasks %}is-valid{% endif %}" id="id_self_tasks" {% if self_tasks %}checked{% endif %}>
-            <label class="form-check-label " for="id_self_tasks">Только свои задачи</label>
+            {{ form.self_tasks }}
+            <label class="form-check-label" for="{{ form.self_tasks.id_for_label }}">Только свои задачи</label>
         </div>
-        </div>
-        <input class="btn btn-primary" type="submit" value="Показать">
-    </form>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Показать">
+</form>
   </div>
 </div>
 
