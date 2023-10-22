@@ -13,7 +13,7 @@ class LabelsView(View):
     def get(self, request, *args, **kwargs):
         is_session_active = 'user_id' in request.session
         if is_session_active:
-            labels = list(Labels.objects.all())
+            labels = list(Labels.objects.all().order_by('id'))
             rollbar.report_exc_info()
             return render(request, 'labels/index.html',
                           {'is_session_active': is_session_active,
