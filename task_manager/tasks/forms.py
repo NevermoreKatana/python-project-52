@@ -70,6 +70,6 @@ class TaskFilterForm(forms.Form):
 
         self.fields['status'].choices = [('', '---------')] + [(status.id, status.name) for status in Status.objects.all()]
         self.fields['executor'].choices = [('', '---------')] + [(u.id, f"{u.first_name} {u.last_name}") for u in User.objects.all()]
-        self.fields['labels'].choices = [('', '---------')] + [(label.id, label.name) for label in Labels.objects.all()]
+        self.fields['label'].choices = [('', '---------')] + [(label.id, label.name) for label in Labels.objects.all()]
 
 
