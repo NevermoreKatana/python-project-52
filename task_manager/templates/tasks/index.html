@@ -77,8 +77,8 @@
           <a href="{% url 'task' pk=t.id %}">{{t.name}}</a>
         </td>
         <td>{{t.status.name}}</td>
-        <td>{{t.author}}</td>
-        <td>{{t.executor}}</td>
+        <td>{{t.author.first_name}} {{t.author.last_name}}</td>
+        <td>{{t.executor.first_name}} {{t.executor.last_name}}</td>
         <td>{{t.create_at}}</td>
         <td>
           <a href="{% url 'tasks_update' pk=t.id  %}">Изменить</a>
