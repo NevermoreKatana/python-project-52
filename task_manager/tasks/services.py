@@ -72,7 +72,7 @@ def update_task(task_id, form, request):
 
 
 def task_filter(form, request):
-    tasks = Tasks.objects.all()
+    tasks = Tasks.objects.all().order_by('id')
     if form.is_valid():
         status = form.cleaned_data['status']
         executor = form.cleaned_data['executor']
