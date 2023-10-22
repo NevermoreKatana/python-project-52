@@ -16,7 +16,7 @@ class IndexView(View):
         is_session_active = 'user_id' in request.session
         if is_session_active:
             form = TaskFilterForm(request.GET)
-            tasks = services.task_filter(form, request)
+            tasks = Tasks.objects.all().order_by('id')
             return render(request, 'tasks/index.html', {
                 'is_session_active': is_session_active,
                 'tasks': tasks,
@@ -35,7 +35,7 @@ class TasksCreateView(View):
             return render(request, 'tasks/create.html',
                           {'is_session_active': is_session_active,
                            'form': form})
-        return handle_error(request,'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
 
     def post(self, request, *args, **kwargs):
         form = TaskForm(request.POST)
