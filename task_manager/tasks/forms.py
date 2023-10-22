@@ -4,11 +4,11 @@ from task_manager.labels.models import Labels
 from django.contrib.auth.models import User
 
 class TaskForm(forms.Form):
-    name = forms.CharField(label='Имя', max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}))
-    description = forms.CharField(label='Описание', widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}))
-    status = forms.ChoiceField(label='Статус', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
-    executor = forms.ChoiceField(label='Исполнитель', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
-    labels = forms.MultipleChoiceField(label='Метки', choices=[], widget=forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}))
+    name = forms.CharField(label='Имя', label_suffix='', max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}))
+    description = forms.CharField(label='Описание', label_suffix='', widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}))
+    status = forms.ChoiceField(label='Статус', label_suffix='', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
+    executor = forms.ChoiceField(label='Исполнитель', label_suffix='', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
+    labels = forms.MultipleChoiceField(label='Метки', label_suffix='', choices=[], widget=forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}))
 
     def __init__(self, *args, **kwargs):
         name = kwargs.pop('name', None)
@@ -43,24 +43,28 @@ class TaskForm(forms.Form):
 class TaskFilterForm(forms.Form):
     status = forms.ChoiceField(
         label='Статус',
+        label_suffix='',
         choices=[],
         required=False,
         widget=forms.Select(attrs={'class': 'form-select '})
     )
     executor = forms.ChoiceField(
         label='Исполнитель',
+        label_suffix='',
         choices=[],
         required=False,
         widget=forms.Select(attrs={'class': 'form-select '})
     )
     label = forms.ChoiceField(
         label='Метка',
+        label_suffix='',
         choices=[],
         required=False,
         widget=forms.Select(attrs={'class': 'form-select '})
     )
     self_tasks = forms.BooleanField(
         label='Только свои задачи',
+        label_suffix='',
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
