@@ -3,6 +3,8 @@ from task_manager.tasks.models import Tasks
 from task_manager.labels.models import Labels
 from django.contrib.auth.models import User
 from task_manager.tasks.forms import TaskForm
+
+
 def create_task(form, request):
     if form.is_valid():
         name = form.cleaned_data['name']
