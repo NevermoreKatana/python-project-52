@@ -16,7 +16,7 @@ class IndexView(View):
         is_session_active = 'user_id' in request.session
         if is_session_active:
             form = TaskFilterForm(request.GET)
-            tasks = Tasks.objects.all().order_by('id')
+            tasks = services.task_filter(form, request)
             return render(request, 'tasks/index.html', {
                 'is_session_active': is_session_active,
                 'tasks': tasks,
