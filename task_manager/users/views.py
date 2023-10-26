@@ -7,18 +7,18 @@ import rollbar
 from task_manager.users.forms import RegistrationForm
 from task_manager.users import services
 from task_manager.services import handle_success, handle_error
+from django.views.generic import ListView
 
 
-class UserView(View):
+class UserView(ListView):
+    model = User
+    template_name = 'users/index.html'
+    context_object_name = 'users'
 
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-
-        formatted_users = services.format_user()
-        rollbar.report_exc_info()
-        return render(request, 'users/index.html',
-                      {'users': formatted_users,
-                       'is_session_active': is_session_active})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
 
 
 class UserCreateView(View):

@@ -40,16 +40,16 @@
     </tr>
   </thead>
   <tbody>
-      {% for u in users %}
+      {% for user in users %}
       <tr>
-        <td>{{u.id}}</td>
-        <td>{{u.username}}</td>
-        <td>{{u.first_name}} {{u.last_name}}</td>
-        <td>{{u.date_joined}}</td>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.first_name}} {{u.last_name}}</td>
+        <td>{{user.date_joined}}</td>
         <td>
-          <a href="/users/{{u.id}}/update/">Изменить</a>
+          <a href="/users/{{user.id}}/update/">Изменить</a>
           <br>
-          <a href="/users/{{u.id}}/delete/">Удалить</a>
+          <a href="/users/{{user.id}}/delete/">Удалить</a>
         </td>
       </tr>
       {% endfor %}

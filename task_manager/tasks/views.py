@@ -9,90 +9,130 @@ import rollbar
 from task_manager.services import handle_success, handle_error
 from task_manager.tasks import services
 from task_manager.tasks.forms import TaskForm, TaskFilterForm
-
-class IndexView(View):
-
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            form = TaskFilterForm(request.GET)
-            tasks = services.task_filter(form, request)
-            return render(request, 'tasks/index.html', {
-                'is_session_active': is_session_active,
-                'tasks': tasks,
-                'form': form,
-            })
-
-        return handle_error(request,'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
-
-class TasksCreateView(View):
-
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            form = TaskForm()
-            rollbar.report_exc_info()
-            return render(request, 'tasks/create.html',
-                          {'is_session_active': is_session_active,
-                           'form': form})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
-
-    def post(self, request, *args, **kwargs):
-        form = TaskForm(request.POST)
-        if services.create_task(form, request):
-            return handle_success(request, 'Задача успешно создана','tasks_index')
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import reverse
+from django.http import HttpResponseRedirect
 
 
-class TasksDeleteView(View):
+class IndexView(LoginRequiredMixin, ListView):
+    model = Tasks
+    template_name = 'tasks/index.html'
+    context_object_name = 'tasks'
+    login_url = 'login'
+    redirect_field_name = ""
 
-    def get(self, request, *args, **kwargs):
-        task_id = kwargs.get('pk')
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            task = services.not_author_delete(request, task_id)
-            if task:
-                rollbar.report_exc_info()
-                return render(request, 'tasks/delete.html',
-                              {'is_session_active': is_session_active,
-                               'task': task})
-            return handle_error(request, 'Задачу может удалить только ее автор', 'tasks_index')
-        return handle_error(request,'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TaskFilterForm(self.request.GET)
+        return context
 
-    def post(self, request, *args, **kwargs):
-        task_id = kwargs.get('pk')
-        if services.delete_task(task_id):
-            return handle_success(request, 'Задача успешно удалена', 'tasks_index')
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = TaskFilterForm(self.request.GET)
+        if form.is_valid():
+            status = form.cleaned_data['status']
+            executor = form.cleaned_data['executor']
+            label = form.cleaned_data['label']
+            self_tasks = form.cleaned_data['self_tasks']
+            if status:
+                queryset = queryset.filter(status__id=status)
+            if executor:
+                queryset = queryset.filter(executor__id=executor)
+            if label:
+                queryset = queryset.filter(labels__id=label)
+            if self_tasks:
+                queryset = queryset.filter(author=self.request.user)
+        return queryset
 
-
-class UpdateStatusView(View):
-
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        task_id = kwargs.get('pk')
-        if is_session_active:
-            form = services.get_init_update_task(task_id)
-            rollbar.report_exc_info()
-            return render(request, 'tasks/update.html',
-                          {'is_session_active': is_session_active,
-                           'form': form})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
-
-    def post(self, request, *args, **kwargs):
-        task_id = kwargs.get('pk')
-        form = TaskForm(request.POST)
-        if services.update_task(task_id, form, request):
-            return handle_success(request, 'Задача успешно изменена', 'tasks_index')
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
 
 
-class TaskView(View):
+class TasksCreateView(LoginRequiredMixin, CreateView):
+    model = Tasks
+    template_name = 'tasks/create.html'
+    form_class = TaskForm
+    login_url = 'login'
+    redirect_field_name = ""
 
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        task_id = kwargs.get('pk')
-        if is_session_active:
-            tasks = Tasks.objects.get(id=task_id)
-            rollbar.report_exc_info()
-            return render(request, 'tasks/task.html',
-                          {'is_session_active': is_session_active,
-                           'tasks': tasks})
-        return handle_error(request,'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+    def get_success_url(self):
+        messages.success(self.request, 'Задача успешно создана')
+        return reverse('tasks_index')
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+
+
+class TasksDeleteView(LoginRequiredMixin, DeleteView):
+    model = Tasks
+    template_name = 'tasks/delete.html'
+    context_object_name = 'task'
+    login_url = 'login'
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+    def get_success_url(self):
+        messages.success(self.request, 'Задача успешно удалена')
+        return reverse('tasks_index')
+
+    def dispatch(self, request, *args, **kwargs):
+        task = self.get_object()
+        if task.author != self.request.user:
+            messages.error(self.request, 'Задачу может удалить только ее автор')
+            return HttpResponseRedirect(reverse('tasks_index'))
+        return super().dispatch(request, *args, **kwargs)
+
+class UpdateTaskView(LoginRequiredMixin, UpdateView):
+    model = Tasks
+    template_name = 'tasks/update.html'
+    form_class = TaskForm
+    login_url = 'login'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        task = Tasks.objects.get(id=self.kwargs['pk'])
+        label_ids = list(task.labels.values_list('id', flat=True))
+        initial_data = {
+            'name': task.name,
+            'description': task.description,
+            'status': task.status.id,
+            'executor': task.executor.id,
+            'labels': label_ids
+        }
+
+        kwargs['initial'] = initial_data
+        return kwargs
+
+    def get_success_url(self):
+        messages.success(self.request, 'Задача успешно обновлена')
+        return reverse('tasks_index')
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+
+
+class TaskView(LoginRequiredMixin, ListView):
+    model = Tasks
+    template_name = 'tasks/task.html'
+    login_url = 'login'
+    redirect_field_name = ""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = Tasks.objects.get(id=self.kwargs['pk'])
+        context['tasks'] = task
+        context['form'] = TaskFilterForm(self.request.GET)
+        return context
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+

@@ -7,18 +7,20 @@ import rollbar
 from task_manager.labels.forms import LabelForm
 from task_manager.labels import services
 from task_manager.services import handle_success, handle_error
+from django.views.generic import ListView
 
-class LabelsView(View):
 
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            labels = list(Labels.objects.all().order_by('id'))
-            rollbar.report_exc_info()
-            return render(request, 'labels/index.html',
-                          {'is_session_active': is_session_active,
-                           'labels': labels})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+class LabelsView(ListView):
+    model = Labels
+    template_name = 'labels/index.html'
+    context_object_name = 'labels'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
+        # return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
 
 class LabelsCreateView(View):
 

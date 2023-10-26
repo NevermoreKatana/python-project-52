@@ -40,16 +40,16 @@
     </tr>
   </thead>
   <tbody>
-  {% for s in statuses %}
+  {% for status in statuses %}
 
       <tr>
-        <td>{{s.id}}</td>
-        <td>{{s.name}}</td>
-        <td>{{s.create_at}}</td>
+        <td>{{status.id}}</td>
+        <td>{{status.name}}</td>
+        <td>{{status.create_at}}</td>
         <td>
-          <a href="{% url 'update_status' pk=s.id %}">Изменить</a>
+          <a href="{% url 'update_status' pk=status.id %}">Изменить</a>
           <br>
-          <a href="{% url 'delete_status' pk=s.id %}">Удалить</a>
+          <a href="{% url 'delete_status' pk=status.id %}">Удалить</a>
         </td>
       </tr>
   {% endfor %}

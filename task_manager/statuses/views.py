@@ -6,20 +6,20 @@ import rollbar
 from task_manager.statuses.forms import StatusForm
 from task_manager.services import handle_error, handle_success
 from task_manager.statuses import services
+from django.views.generic import ListView
 
-class IndexView(View):
+class IndexView(ListView):
+    model = Status
+    template_name = 'statuses/index.html'
+    context_object_name = 'statuses'
 
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            statuses = Status.objects.all().order_by('id')
-            rollbar.report_exc_info()
-            return render(request, 'statuses/index.html',
-                          {'is_session_active': is_session_active,
-                           'statuses': statuses})
-        messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return redirect('login')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+    #     messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+    #     rollbar.report_exc_info()
+    #     return redirect('login')
 
 
 class CreateStatusView(View):

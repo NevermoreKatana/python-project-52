@@ -2,42 +2,40 @@ from django import forms
 from task_manager.statuses.models import Status
 from task_manager.labels.models import Labels
 from django.contrib.auth.models import User
-
-class TaskForm(forms.Form):
-    name = forms.CharField(label='Имя', label_suffix='', max_length=150, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}))
-    description = forms.CharField(label='Описание', label_suffix='', widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}))
-    status = forms.ChoiceField(label='Статус', label_suffix='', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
-    executor = forms.ChoiceField(label='Исполнитель', label_suffix='', choices=[], widget=forms.Select(attrs={'class': 'form-select'}))
-    labels = forms.MultipleChoiceField(label='Метки', label_suffix='', choices=[], widget=forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}))
+from task_manager.tasks.models import Tasks
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Tasks
+        fields = ['name', 'description', 'status', 'executor', 'labels']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'executor': forms.Select(attrs={'class': 'form-select'}),
+            'labels': forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}),
+        }
+        labels = {
+            'name': 'Имя',
+            'description': 'Описание',
+            'status': 'Статус',
+            'executor': 'Исполнитель',
+            'labels': 'Метки',
+        }
 
     def __init__(self, *args, **kwargs):
-        name = kwargs.pop('name', None)
-        description = kwargs.pop('description', None)
-        status_id = kwargs.pop('status_id', None)
-        executor_id = kwargs.pop('executor_id', None)
-        labels = kwargs.pop('labels', None)
-
+        initial = kwargs.get('initial', {})
         super(TaskForm, self).__init__(*args, **kwargs)
-
-        self.fields['status'].choices = [('', '---------')] + [(status.id, status.name) for status in Status.objects.all()]
-        self.fields['executor'].choices = [('', '---------')] + [(executor.id, f"{executor.first_name} {executor.last_name}") for executor in
+        self.fields['status'].choices = [(status.id, status.name) for status in Status.objects.all()]
+        self.fields['executor'].choices = [(executor.id, f"{executor.first_name} {executor.last_name}") for executor in
                                            User.objects.all()]
         self.fields['labels'].choices = [(label.id, label.name) for label in Labels.objects.all()]
 
-        if name:
-            self.initial['name'] = name
+        self.initial['name'] = initial.get('name', '')
+        self.initial['description'] = initial.get('description', '')
+        self.initial['status'] = initial.get('status_id', '')
+        self.initial['executor'] = initial.get('executor_id', '')
+        self.initial['labels'] = initial.get('labels', [])
 
-        if description:
-            self.initial['description'] = description
-
-        if status_id:
-            self.initial['status'] = status_id
-
-        if executor_id:
-            self.initial['executor'] = executor_id
-
-        if labels:
-            self.initial['labels'] = labels
 
 
 class TaskFilterForm(forms.Form):
