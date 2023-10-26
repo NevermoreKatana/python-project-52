@@ -55,11 +55,15 @@ class TasksCreateView(LoginRequiredMixin, CreateView):
     template_name = 'tasks/create.html'
     form_class = TaskForm
     login_url = 'login'
-    redirect_field_name = ""
 
     def get_success_url(self):
         messages.success(self.request, 'Задача успешно создана')
         return reverse('tasks_index')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, 'Задача успешно создана')
+        return super().form_valid(form)
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')

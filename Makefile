@@ -19,3 +19,6 @@ test:
 
 make lint:
 	poetry run flake8 task_manager
+
+migrate:
+	poetry run python manage.py migrate

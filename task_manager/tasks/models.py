@@ -8,7 +8,7 @@ class Tasks(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    executor = models.ForeignKey(User, on_delete=models.CASCADE)
+    executor = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     labels = models.ManyToManyField(Labels)
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='authored_tasks', default=1)

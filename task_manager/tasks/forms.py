@@ -11,7 +11,7 @@ class TaskForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
-            'executor': forms.Select(attrs={'class': 'form-select'}),
+            'executor': forms.Select(attrs={'class': 'form-select', 'required': False}),
             'labels': forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}),
         }
         labels = {
@@ -25,8 +25,8 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial', {})
         super(TaskForm, self).__init__(*args, **kwargs)
-        self.fields['status'].choices = [(status.id, status.name) for status in Status.objects.all()]
-        self.fields['executor'].choices = [(executor.id, f"{executor.first_name} {executor.last_name}") for executor in
+        self.fields['status'].choices =[('', '---------')] + [(status.id, status.name) for status in Status.objects.all()]
+        self.fields['executor'].choices =[('', '---------')] + [(executor.id, f"{executor.first_name} {executor.last_name}") for executor in
                                            User.objects.all()]
         self.fields['labels'].choices = [(label.id, label.name) for label in Labels.objects.all()]
 
