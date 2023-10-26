@@ -17,19 +17,19 @@
 
 <form method="post">
   {% csrf_token %}
-  {{ form.name.label_tag }}
+  {{ form.name.label_tag|cut:':'   }}
   {{ form.name }}
   <br>
-  {{ form.description.label_tag }}
+  {{ form.description.label_tag|cut:':'  }}
   {{ form.description }}
   <br>
-  {{ form.status.label_tag }}
+  {{ form.status.label_tag|cut:':'  }}
   {{form.status}}
   <br>
-  {{ form.executor.label_tag }}
+  {{ form.executor.label_tag|cut:':'  }}
   {{form.executor }}
   <br>
-  {{ form.labels.label_tag }}
+  {{ form.labels.label_tag|cut:':'  }}
   {{form.labels}}
   <br>
   <input class="btn btn-primary" type="submit" value="Создать">

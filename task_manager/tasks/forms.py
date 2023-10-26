@@ -21,7 +21,7 @@ class TaskForm(forms.ModelForm):
             'executor': 'Исполнитель',
             'labels': 'Метки',
         }
-
+        #label_suffix = '' Не работает не понятно почему, решение через jinja
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial', {})
         super(TaskForm, self).__init__(*args, **kwargs)
