@@ -25,7 +25,7 @@ class RegistrationForm(forms.ModelForm):
             'required': 'required',
             'id': 'id_username'
         }),
-            'password1': forms.PasswordInput(attrs={
+            'password': forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Пароль',
             'required': 'required',
@@ -36,7 +36,7 @@ class RegistrationForm(forms.ModelForm):
             'first_name': 'Имя',
             'last_name': 'Фамилия',
             'username': 'Имя пользователя',
-            'password': 'Пароль'
+            'password1': 'Пароль'
         }
 
     password2 = forms.CharField(
