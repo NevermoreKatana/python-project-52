@@ -39,7 +39,7 @@ class RegistrationForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Пароль',
             'required': 'required',
-            'id': 'password_confirm'
+            'id': 'id_password1'
         })
     )
     password2 = forms.CharField(
@@ -49,6 +49,6 @@ class RegistrationForm(forms.ModelForm):
             'class': 'form-control',
             'placeholder': 'Подтверждение пароля',
             'required': 'required',
-            'id': 'password_confirm'
+            'id': 'id_password2'
         })
     )
