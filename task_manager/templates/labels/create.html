@@ -22,6 +22,12 @@
       <div class="mb-3">
          {{ form.name.label_tag }}
           {{ form.name }}
+
+      {% for message in messages %}
+           {% if message.tags %}<div class="invalid-feedback">{{ message }}</div>{% endif %}
+      {% endfor %}
+
+
       </div>
     <input class="btn btn-primary" type="submit" value="Создать">
 </form>

@@ -7,74 +7,100 @@ import rollbar
 from task_manager.labels.forms import LabelForm
 from task_manager.labels import services
 from task_manager.services import handle_success, handle_error
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import reverse
+from django.http import HttpResponseRedirect
 
-
-class LabelsView(ListView):
+class LabelsView(LoginRequiredMixin, ListView):
     model = Labels
     template_name = 'labels/index.html'
     context_object_name = 'labels'
+    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-        # return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
-
-class LabelsCreateView(View):
-
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        form = LabelForm()
-        if is_session_active:
-            rollbar.report_exc_info()
-            return render(request, 'labels/create.html', {'is_session_active': is_session_active, 'form':form})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
-
-    def post(self, request, *args, **kwargs):
-        form = LabelForm(request.POST)
-        if services.create_label(form):
-            return handle_success(request, 'Метка успешно создана', 'labels_index')
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
 
 
-class LabelsDeleteView(View):
+class LabelsCreateView(LoginRequiredMixin, CreateView):
+    model = Labels
+    template_name = 'labels/create.html'
+    form_class = LabelForm
+    login_url = 'login'
 
-    def get(self, request, *args, **kwargs):
-        label_id = kwargs.get('pk')
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            label = services.get_label_info(label_id)
-            rollbar.report_exc_info()
-            return render(request, 'labels/delete.html',
-                          {'is_session_active': is_session_active,
-                           'label': label[0]})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
+    def get_success_url(self):
+        messages.success(self.request, 'Метка успешно создана')
+        return reverse('labels_index')
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
 
     def post(self, request, *args, **kwargs):
-        label_id = kwargs.get('pk')
-        if services.delete_label(label_id):
-            return handle_success(request, 'Метка успешно удалена', 'labels_index')
-        return handle_error(request, 'Невозможно удалить метку, потому что она используется','labels_index')
+        name = self.request.POST.get('name')
+
+        if Labels.objects.filter(name=name).exists():
+            messages.error(self.request, 'Label с таким именем уже существует.')
+            return HttpResponseRedirect(reverse('labels_create'))
+
+        return super().post(request, *args, **kwargs)
 
 
-class LabelsUpdateView(View):
+class LabelsDeleteView(LoginRequiredMixin, DeleteView):
+    model = Labels
+    template_name = 'labels/delete.html'
+    login_url = 'login'
 
-    def get(self, request, *args, **kwargs):
-        label_id = kwargs.get('pk')
-        is_session_active = 'user_id' in request.session
-        if is_session_active:
-            label = services.get_initial_data(label_id)
-            form = LabelForm(label)
-            rollbar.report_exc_info()
-            return render(request, 'labels/update.html',
-                          {'is_session_active': is_session_active,
-                           'form': form})
-        return handle_error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.', 'login')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
 
-    def post(self, request, *args, **kwargs):
-        label_id = kwargs.get('pk')
-        form = LabelForm(request.POST)
-        if services.update_label(form, label_id):
-            return handle_success(request, 'Метка успешно изменена', 'labels_index')
+    def get_success_url(self):
+        messages.success(self.request, 'Метка успешно удалена')
+        return reverse('statuses_index')
 
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+
+class LabelsUpdateView(LoginRequiredMixin, UpdateView):
+    model = Labels
+    template_name = 'statuses/update.html'
+    form_class = LabelForm
+    login_url = 'login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
+    def get_success_url(self):
+        messages.success(self.request, 'Метка успешно изменена')
+        return reverse('labels_index')
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        label = Labels.objects.get(id=self.kwargs['pk'])
+        initial_data = {
+            'name': label.name,
+        }
+
+        kwargs['initial'] = initial_data
+        return kwargs
