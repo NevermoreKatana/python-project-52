@@ -38,7 +38,7 @@ class RegistrationForm(forms.Form):
         })
     )
 
-    password1 = forms.CharField(
+    password = forms.CharField(
         label='Пароль',
         label_suffix='',
         widget=forms.PasswordInput(attrs={
@@ -49,7 +49,7 @@ class RegistrationForm(forms.Form):
         })
     )
 
-    password2 = forms.CharField(
+    password_confirm = forms.CharField(
         label='Подтверждение пароля',
         label_suffix='',
         widget=forms.PasswordInput(attrs={
