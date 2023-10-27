@@ -20,7 +20,7 @@
 <form method="post">
   {% csrf_token %}
   <div class="mb-3">
-     {{ form.name.label_tag }}
+     {{ form.name.label_tag|cut:':' }}
       {{ form.name }}
   </div>
     <input class="btn btn-primary" type="submit" value="Создать">
