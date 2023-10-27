@@ -12,7 +12,7 @@ class TaskForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
             'executor': forms.Select(attrs={'class': 'form-select', 'required': False}),
-            'labels': forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple'}),
+            'labels': forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': 'multiple', 'required': False}),
         }
         labels = {
             'name': 'Имя',
@@ -21,7 +21,6 @@ class TaskForm(forms.ModelForm):
             'executor': 'Исполнитель',
             'labels': 'Метки',
         }
-        #label_suffix = '' Не работает не понятно почему, решение через jinja
     def __init__(self, *args, **kwargs):
         initial = kwargs.get('initial', {})
         super(TaskForm, self).__init__(*args, **kwargs)

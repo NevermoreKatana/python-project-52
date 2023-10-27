@@ -25,6 +25,7 @@ class IndexView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = TaskFilterForm(self.request.GET)
+        context['is_session_active'] = 'user_id' in self.request.session
         return context
 
     def get_queryset(self):
@@ -69,6 +70,11 @@ class TasksCreateView(LoginRequiredMixin, CreateView):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         return super().handle_no_permission()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
 
 
 class TasksDeleteView(LoginRequiredMixin, DeleteView):
@@ -76,6 +82,11 @@ class TasksDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'tasks/delete.html'
     context_object_name = 'task'
     login_url = 'login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
@@ -98,6 +109,11 @@ class UpdateTaskView(LoginRequiredMixin, UpdateView):
     form_class = TaskForm
     login_url = 'login'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         task = Tasks.objects.get(id=self.kwargs['pk'])
@@ -105,8 +121,8 @@ class UpdateTaskView(LoginRequiredMixin, UpdateView):
         initial_data = {
             'name': task.name,
             'description': task.description,
-            'status': task.status.id,
-            'executor': task.executor.id,
+            'status_id': task.status.id,
+            'executor_id': task.executor.id,
             'labels': label_ids
         }
 
@@ -128,6 +144,11 @@ class TaskView(LoginRequiredMixin, ListView):
     template_name = 'tasks/task.html'
     login_url = 'login'
     redirect_field_name = ""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
