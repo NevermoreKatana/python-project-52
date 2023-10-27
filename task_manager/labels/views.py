@@ -64,7 +64,7 @@ class LabelsDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, 'Метка успешно удалена')
-        return reverse('statuses_index')
+        return reverse('labels_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
