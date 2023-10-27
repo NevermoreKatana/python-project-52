@@ -147,14 +147,10 @@ class TaskView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         task = Tasks.objects.get(id=self.kwargs['pk'])
         context['tasks'] = task
         context['form'] = TaskFilterForm(self.request.GET)
+        context['is_session_active'] = 'user_id' in self.request.session
         return context
 
     def handle_no_permission(self):
