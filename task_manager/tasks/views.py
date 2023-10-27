@@ -130,7 +130,7 @@ class UpdateTaskView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def get_success_url(self):
-        messages.success(self.request, 'Задача успешно обновлена')
+        messages.success(self.request, 'Задача успешно изменена')
         return reverse('tasks_index')
 
     def handle_no_permission(self):
