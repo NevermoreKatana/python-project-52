@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 
+
 class LabelsView(LoginRequiredMixin, ListView):
     model = Labels
     template_name = 'labels/index.html'
@@ -36,10 +37,12 @@ class LabelsCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Метка успешно создана')
+        rollbar.report_exc_info()
         return reverse('labels_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def post(self, request, *args, **kwargs):
@@ -47,8 +50,9 @@ class LabelsCreateView(LoginRequiredMixin, CreateView):
 
         if Labels.objects.filter(name=name).exists():
             messages.error(self.request, 'Label с таким именем уже существует.')
+            rollbar.report_exc_info()
             return HttpResponseRedirect(reverse('labels_create'))
-
+        rollbar.report_exc_info()
         return super().post(request, *args, **kwargs)
 
 
@@ -64,10 +68,12 @@ class LabelsDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, 'Метка успешно удалена')
+        rollbar.report_exc_info()
         return reverse('labels_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
 
@@ -84,10 +90,12 @@ class LabelsUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Метка успешно изменена')
+        rollbar.report_exc_info()
         return reverse('labels_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def get_form_kwargs(self):

@@ -29,6 +29,7 @@ class UserCreateView(CreateView):
     form_class = RegistrationForm
 
     def get_success_url(self):
+        rollbar.report_exc_info()
         return reverse('login')
 
     def form_valid(self, form):
@@ -37,10 +38,12 @@ class UserCreateView(CreateView):
 
         if password != password_confirm:
             messages.error(self.request, "Пароль и подтверждение пароля не совпадают.")
+            rollbar.report_exc_info()
             return self.form_invalid(form)
 
         form.instance.password = make_password(password)
         messages.success(self.request, 'Пользователь успешно зарегистрирован')
+        rollbar.report_exc_info()
         return super().form_valid(form)
 
 
@@ -56,26 +59,32 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def get_success_url(self):
         logout(self.request)
         messages.success(self.request, 'Пользователь успешно удален')
+        rollbar.report_exc_info()
         return reverse('users_index')
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
         if user.id != self.request.user.id:
             messages.error(self.request, 'У вас нет прав для изменения другого пользователя.')
+            rollbar.report_exc_info()
             return HttpResponseRedirect(reverse('users_index'))
+        rollbar.report_exc_info()
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         user = self.get_object()
         if Tasks.objects.filter(executor=user) or Tasks.objects.filter(author=user):
-            messages.error(self.request, 'Невозможно удалить пользователя, потому что он используется')
+            messages.error(self.request,
+                           'Невозможно удалить пользователя, потому что он используется')
+            rollbar.report_exc_info()
             return HttpResponseRedirect(reverse('users_index'))
-
+        rollbar.report_exc_info()
         return super().post(request, *args, **kwargs)
 
 
@@ -92,13 +101,16 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
         if user.id != self.request.user.id:
             messages.error(self.request, 'У вас нет прав для изменения другого пользователя.')
+            rollbar.report_exc_info()
             return HttpResponseRedirect(reverse('users_index'))
+        rollbar.report_exc_info()
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -107,12 +119,14 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
         if password != password_confirm:
             messages.error(self.request, "Пароль и подтверждение пароля не совпадают.")
+            rollbar.report_exc_info()
             return self.form_invalid(form)
-
+        rollbar.report_exc_info()
         form.instance.password = make_password(password)
         return super().form_valid(form)
 
     def get_success_url(self):
         logout(self.request)
         messages.success(self.request, 'Пользователь успешно изменен')
+        rollbar.report_exc_info()
         return reverse('users_index')

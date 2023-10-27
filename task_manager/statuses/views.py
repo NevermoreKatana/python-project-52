@@ -13,7 +13,6 @@ class IndexView(LoginRequiredMixin, ListView):
     context_object_name = 'statuses'
     login_url = 'login'
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
@@ -21,6 +20,7 @@ class IndexView(LoginRequiredMixin, ListView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
 
@@ -37,12 +37,13 @@ class CreateStatusView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Статус успешно создан')
+        rollbar.report_exc_info()
         return reverse('statuses_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
-
 
 
 class UpdateStatusView(LoginRequiredMixin, UpdateView):
@@ -58,10 +59,12 @@ class UpdateStatusView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Статус успешно изменен')
+        rollbar.report_exc_info()
         return reverse('statuses_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def get_form_kwargs(self):
@@ -73,7 +76,6 @@ class UpdateStatusView(LoginRequiredMixin, UpdateView):
 
         kwargs['initial'] = initial_data
         return kwargs
-
 
 
 class DeleteStatusView(LoginRequiredMixin, DeleteView):
@@ -88,8 +90,10 @@ class DeleteStatusView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         messages.success(self.request, 'Статус успешно удален')
+        rollbar.report_exc_info()
         return reverse('statuses_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()

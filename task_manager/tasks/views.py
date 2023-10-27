@@ -1,5 +1,4 @@
 from django.contrib import messages
-from task_manager.statuses.models import Status
 from task_manager.tasks.models import Tasks
 import rollbar
 from task_manager.tasks.forms import TaskForm, TaskFilterForm
@@ -42,6 +41,7 @@ class IndexView(LoginRequiredMixin, ListView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
 
@@ -52,22 +52,24 @@ class TasksCreateView(LoginRequiredMixin, CreateView):
     login_url = 'login'
 
     def get_success_url(self):
+        rollbar.report_exc_info()
         return reverse('tasks_index')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         messages.success(self.request, 'Задача успешно создана')
+        rollbar.report_exc_info()
         return super().form_valid(form)
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
 
 
 class TasksDeleteView(LoginRequiredMixin, DeleteView):
@@ -83,18 +85,23 @@ class TasksDeleteView(LoginRequiredMixin, DeleteView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
 
     def get_success_url(self):
         messages.success(self.request, 'Задача успешно удалена')
+        rollbar.report_exc_info()
         return reverse('tasks_index')
 
     def dispatch(self, request, *args, **kwargs):
         task = self.get_object()
         if task.author != self.request.user:
             messages.error(self.request, 'Задачу может удалить только ее автор')
+            rollbar.report_exc_info()
             return HttpResponseRedirect(reverse('tasks_index'))
+        rollbar.report_exc_info()
         return super().dispatch(request, *args, **kwargs)
+
 
 class UpdateTaskView(LoginRequiredMixin, UpdateView):
     model = Tasks
@@ -124,12 +131,13 @@ class UpdateTaskView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, 'Задача успешно изменена')
+        rollbar.report_exc_info()
         return reverse('tasks_index')
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
-
 
 
 class TaskView(LoginRequiredMixin, ListView):
@@ -148,5 +156,5 @@ class TaskView(LoginRequiredMixin, ListView):
 
     def handle_no_permission(self):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        rollbar.report_exc_info()
         return super().handle_no_permission()
-

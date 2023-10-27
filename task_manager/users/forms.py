@@ -7,24 +7,21 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'username']
         widgets = {
-            'first_name': forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Имя',
-            'required': 'required',
-            'id': 'id_first_name'
-        }),
-            'last_name': forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Фамилия',
-            'required': 'required',
-            'id': 'id_last_name'
-        }),
-            'username': forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Имя пользователя',
-            'required': 'required',
-            'id': 'id_username'
-        })
+            'first_name': forms.TextInput(attrs={'class': 'form-control',
+                                                 'placeholder': 'Имя',
+                                                 'required': 'required',
+                                                 'id': 'id_first_name'}
+                                          ),
+            'last_name': forms.TextInput(attrs={'class': 'form-control',
+                                                'placeholder': 'Фамилия',
+                                                'required': 'required',
+                                                'id': 'id_last_name'}
+                                         ),
+            'username': forms.TextInput(attrs={'class': 'form-control',
+                                               'placeholder': 'Имя пользователя',
+                                               'required': 'required',
+                                               'id': 'id_username'}
+                                        )
         }
         labels = {
             'first_name': 'Имя',
