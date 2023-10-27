@@ -30,7 +30,6 @@ class RegistrationForm(forms.ModelForm):
             'first_name': 'Имя',
             'last_name': 'Фамилия',
             'username': 'Имя пользователя',
-            'password1': 'Пароль'
         }
 
     password1 = forms.CharField(
