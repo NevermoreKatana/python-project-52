@@ -58,7 +58,6 @@ class TasksCreateView(LoginRequiredMixin, CreateView):
     login_url = 'login'
 
     def get_success_url(self):
-        messages.success(self.request, 'Задача успешно создана')
         return reverse('tasks_index')
 
     def form_valid(self, form):

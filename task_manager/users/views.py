@@ -7,7 +7,13 @@ import rollbar
 from task_manager.users.forms import RegistrationForm
 from task_manager.users import services
 from task_manager.services import handle_success, handle_error
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import reverse
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+
+from django.http import HttpResponseRedirect
 
 
 class UserView(ListView):
@@ -21,75 +27,96 @@ class UserView(ListView):
         return context
 
 
-class UserCreateView(View):
+class UserCreateView(CreateView):
+    model = User
+    template_name = 'users/create.html'
+    form_class = RegistrationForm
 
-    def get(self, request, *args, **kwargs):
-        is_session_active = 'user_id' in request.session
-        rollbar.report_exc_info()
-        form = RegistrationForm
-        return render(request, 'users/create.html',
-                      {'is_session_active': is_session_active,
-                       'form': form})
+    def get_success_url(self):
+        return reverse('login')
 
-    def post(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST)
-        if services.registeration_user(form):
-            return handle_success(request, 'Пользователь успешно зарегистрирован', 'login')
+    def form_valid(self, form):
+        password = form.cleaned_data['password']
+        password_confirm = form.cleaned_data['password_confirm']
 
+        if password != password_confirm:
+            messages.error(self.request, "Пароль и подтверждение пароля не совпадают.")
+            return self.form_invalid(form)
 
-class UserDeleteView(View):
-
-    def get(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')
-        session_active = 'user_id' in request.session
-        if services.is_session_active(request, user_id):
-            user = services.get_user_info(user_id)
-            return render(request, 'users/delete.html', {'is_session_active': True, 'user': user})
-        elif not session_active:
-            return handle_error(request,
-                                'Вы не авторизованы! Пожалуйста, выполните вход.',
-                                'login')
-        return handle_error(request,
-                            'У вас нет прав для изменения другого пользователя.',
-                            'users_index')
-
-    def post(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')
-        user = User.objects.get(id=user_id)
-        if not services.check_user(Tasks, user):
-            return handle_error(request,
-                                'Невозможно удалить пользователя, потому что он используется',
-                                'users_index')
-        user.delete()
-        logout(request)
-        return handle_success(request,
-                              'Пользователь успешно удален',
-                              'users_index')
+        form.instance.password = make_password(password)
+        messages.success(self.request, 'Пользователь успешно зарегистрирован')
+        return super().form_valid(form)
 
 
-class UserUpdateView(View):
+class UserDeleteView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = 'users/delete.html'
+    login_url = 'login'
 
-    def get(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')
-        is_session_active = 'user_id' in request.session
-        if services.is_session_active(request, user_id):
-            user = services.get_update_user_info(user_id)
-            form = RegistrationForm(user)
-            rollbar.report_exc_info()
-            return render(request, 'users/update.html',
-                          {'is_session_active': is_session_active,
-                           'form': form})
-        elif not is_session_active:
-            return handle_error(request,
-                                'Вы не авторизованы! Пожалуйста, выполните вход.',
-                                'login')
-        return handle_error(request,
-                            'У вас нет прав для изменения другого пользователя.',
-                            'users_index')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+    def get_success_url(self):
+        logout(self.request)
+        messages.success(self.request, 'Пользователь успешно удален')
+        return reverse('users_index')
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.id != self.request.user.id:
+            messages.error(self.request, 'У вас нет прав для изменения другого пользователя.')
+            return HttpResponseRedirect(reverse('users_index'))
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        user_id = kwargs.get('pk')
-        form = RegistrationForm(request.POST)
-        if services.updation_user(form, user_id):
-            logout(request)
-            return handle_success(request, 'Пользователь успешно изменен', 'users_index')
+        user = self.get_object()
+        if Tasks.objects.filter(executor=user) or Tasks.objects.filter(author=user):
+            messages.error(self.request, 'Невозможно удалить пользователя, потому что он используется')
+            return HttpResponseRedirect(reverse('users_index'))
+
+        return super().post(request, *args, **kwargs)
+
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'users/update.html'
+    form_class = RegistrationForm
+    login_url = 'login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context
+
+    def handle_no_permission(self):
+        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+        return super().handle_no_permission()
+
+    def dispatch(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.id != self.request.user.id:
+            messages.error(self.request, 'У вас нет прав для изменения другого пользователя.')
+            return HttpResponseRedirect(reverse('users_index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        password = form.cleaned_data['password']
+        password_confirm = form.cleaned_data['password_confirm']
+
+        if password != password_confirm:
+            messages.error(self.request, "Пароль и подтверждение пароля не совпадают.")
+            return self.form_invalid(form)
+
+        form.instance.password = make_password(password)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        logout(self.request)
+        messages.success(self.request, 'Пользователь успешно изменен')
+        return reverse('users_index')

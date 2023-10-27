@@ -15,6 +15,14 @@
       <h1 class="my-4">
         Регистрация
       </h1>
+<!--        {% if messages %}-->
+<!--        <ul class="messages">-->
+<!--            {% for message in messages %}-->
+<!--            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
+<!--            {% endfor %}-->
+<!--        </ul>-->
+<!--        {% endif %}-->
+
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
@@ -31,13 +39,13 @@
                 <div class="form-text">Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_</div>
             </div>
             <div class="mb-3">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
+                {{ form.password.label_tag }}
+                {{ form.password }}
                 <div class="form-text"><ul><li>Ваш пароль должен содержать как минимум 3 символа.</li></ul></div>
             </div>
             <div class="mb-3">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
+                {{ form.password_confirm.label_tag }}
+                {{ form.password_confirm }}
                 <div class="form-text">Для подтверждения введите, пожалуйста, пароль ещё раз.</div>
             </div>
             <input class="btn btn-primary" type="submit" value="Зарегистрировать">
