@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class RegistrationForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password']
+        fields = ['first_name', 'last_name', 'username']
         widgets = {
             'first_name': forms.TextInput(attrs={
             'class': 'form-control',
@@ -24,13 +24,7 @@ class RegistrationForm(forms.ModelForm):
             'placeholder': 'Имя пользователя',
             'required': 'required',
             'id': 'id_username'
-        }),
-            'password': forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Пароль',
-            'required': 'required',
-            'id': 'id_password'
-        }),
+        })
         }
         labels = {
             'first_name': 'Имя',
@@ -39,6 +33,16 @@ class RegistrationForm(forms.ModelForm):
             'password1': 'Пароль'
         }
 
+    password1 = forms.CharField(
+        label='Пароль',
+        label_suffix='',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Пароль',
+            'required': 'required',
+            'id': 'password_confirm'
+        })
+    )
     password2 = forms.CharField(
         label='Подтверждение пароля',
         label_suffix='',
