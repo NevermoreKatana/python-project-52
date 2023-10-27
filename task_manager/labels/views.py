@@ -1,12 +1,7 @@
-from django.shortcuts import render, redirect
-from django.views import View
 from django.contrib import messages
 from task_manager.labels.models import Labels
-from task_manager.tasks.models import Tasks
 import rollbar
 from task_manager.labels.forms import LabelForm
-from task_manager.labels import services
-from task_manager.services import handle_success, handle_error
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse

@@ -1,12 +1,8 @@
-from django.shortcuts import render
-from django.views import View
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from task_manager.tasks.models import Tasks
 import rollbar
 from task_manager.users.forms import RegistrationForm
-from task_manager.users import services
-from task_manager.services import handle_success, handle_error
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
