@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import reverse
 from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 
 class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = 'login'
@@ -20,4 +21,4 @@ class GetSuccessUrlMixin:
             logout(self.request)
         messages.success(self.request, self.success_message)
         rollbar.report_exc_info()
-        return reverse(self.success_url)
+        return HttpResponseRedirect(reverse(self.success_url))
