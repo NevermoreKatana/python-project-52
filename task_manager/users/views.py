@@ -50,7 +50,7 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = get_user_model()
     template_name = 'users/delete.html'
     success_message = 'Пользователь успешно удален'
-    success_url = '/users/'
+    success_url = 'users_index'
     logout = True
 
     def get_context_data(self, **kwargs):
