@@ -50,7 +50,7 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = get_user_model()
     template_name = 'users/delete.html'
     success_message = 'Пользователь успешно удален'
-    success_url = 'users_index'
+    success_url = '/users/'
     logout = True
 
     def get_context_data(self, **kwargs):
@@ -84,7 +84,7 @@ class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     template_name = 'users/update.html'
     form_class = RegistrationForm
     success_message = 'Пользователь успешно изменен'
-    success_url = 'users_index'
+    success_url = '/users/'
     logout = True
 
     def get_context_data(self, **kwargs):
