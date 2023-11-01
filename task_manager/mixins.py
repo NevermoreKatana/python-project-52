@@ -24,4 +24,4 @@ class GetSuccessUrlMixin:
             logout(self.request)
         messages.success(self.request, self.success_message)
         rollbar.report_exc_info()
-        return HttpResponseRedirect(reverse(self.success_url))
+        return reverse(self.success_url)

@@ -92,7 +92,6 @@ class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
         if user.id != self.request.user.id:
@@ -112,4 +111,4 @@ class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
             return self.form_invalid(form)
         rollbar.report_exc_info()
         form.instance.password = make_password(password)
-        return super().get_success_url()
+        return super().form_valid(form)
