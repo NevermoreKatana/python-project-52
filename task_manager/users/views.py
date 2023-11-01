@@ -10,10 +10,10 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from task_manager.mixins import CustomLoginRequiredMixin
 from django.http import HttpResponseRedirect
-
+from django.contrib.auth import get_user_model
 
 class UserView(ListView):
-    model = User
+    model = get_user_model()
     template_name = 'users/index.html'
     context_object_name = 'users'
 
@@ -24,7 +24,7 @@ class UserView(ListView):
 
 
 class UserCreateView(CreateView):
-    model = User
+    model = get_user_model()
     template_name = 'users/create.html'
     form_class = RegistrationForm
 
@@ -48,7 +48,7 @@ class UserCreateView(CreateView):
 
 
 class UserDeleteView(CustomLoginRequiredMixin, DeleteView):
-    model = User
+    model = get_user_model()
     template_name = 'users/delete.html'
 
     def get_context_data(self, **kwargs):
@@ -84,7 +84,7 @@ class UserDeleteView(CustomLoginRequiredMixin, DeleteView):
 
 
 class UserUpdateView(CustomLoginRequiredMixin, UpdateView):
-    model = User
+    model = get_user_model()
     template_name = 'users/update.html'
     form_class = RegistrationForm
 
