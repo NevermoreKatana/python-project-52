@@ -6,29 +6,25 @@ from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
+from task_manager.mixins import CustomLoginRequiredMixin
 
 
-class LabelsView(LoginRequiredMixin, ListView):
+class LabelsView(CustomLoginRequiredMixin, ListView):
     model = Labels
     template_name = 'labels/index.html'
     context_object_name = 'labels'
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        return super().handle_no_permission()
 
 
-class LabelsCreateView(LoginRequiredMixin, CreateView):
+class LabelsCreateView(CustomLoginRequiredMixin, CreateView):
     model = Labels
     template_name = 'labels/create.html'
     form_class = LabelForm
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,10 +36,6 @@ class LabelsCreateView(LoginRequiredMixin, CreateView):
         rollbar.report_exc_info()
         return reverse('labels_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
     def post(self, request, *args, **kwargs):
         name = self.request.POST.get('name')
@@ -56,10 +48,9 @@ class LabelsCreateView(LoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class LabelsDeleteView(LoginRequiredMixin, DeleteView):
+class LabelsDeleteView(CustomLoginRequiredMixin, DeleteView):
     model = Labels
     template_name = 'labels/delete.html'
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,17 +62,12 @@ class LabelsDeleteView(LoginRequiredMixin, DeleteView):
         rollbar.report_exc_info()
         return reverse('labels_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
 
-class LabelsUpdateView(LoginRequiredMixin, UpdateView):
+class LabelsUpdateView(CustomLoginRequiredMixin, UpdateView):
     model = Labels
     template_name = 'statuses/update.html'
     form_class = LabelForm
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -93,10 +79,6 @@ class LabelsUpdateView(LoginRequiredMixin, UpdateView):
         rollbar.report_exc_info()
         return reverse('labels_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

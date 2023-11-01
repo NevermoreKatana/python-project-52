@@ -2,6 +2,7 @@ import rollbar
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
+
 class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = 'login'
 

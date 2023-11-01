@@ -5,30 +5,24 @@ from task_manager.statuses.forms import StatusForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.shortcuts import reverse
+from task_manager.mixins import CustomLoginRequiredMixin
 
 
-class IndexView(LoginRequiredMixin, ListView):
+class IndexView(CustomLoginRequiredMixin, ListView):
     model = Status
     template_name = 'statuses/index.html'
     context_object_name = 'statuses'
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
-
-class CreateStatusView(LoginRequiredMixin, CreateView):
+class CreateStatusView(CustomLoginRequiredMixin, CreateView):
     model = Status
     template_name = 'statuses/create.html'
     form_class = StatusForm
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,17 +34,12 @@ class CreateStatusView(LoginRequiredMixin, CreateView):
         rollbar.report_exc_info()
         return reverse('statuses_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
 
-class UpdateStatusView(LoginRequiredMixin, UpdateView):
+class UpdateStatusView(CustomLoginRequiredMixin, UpdateView):
     model = Status
     template_name = 'statuses/update.html'
     form_class = StatusForm
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,10 +51,6 @@ class UpdateStatusView(LoginRequiredMixin, UpdateView):
         rollbar.report_exc_info()
         return reverse('statuses_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -78,10 +63,9 @@ class UpdateStatusView(LoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class DeleteStatusView(LoginRequiredMixin, DeleteView):
+class DeleteStatusView(CustomLoginRequiredMixin, DeleteView):
     model = Status
     template_name = 'statuses/delete.html'
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -93,7 +77,3 @@ class DeleteStatusView(LoginRequiredMixin, DeleteView):
         rollbar.report_exc_info()
         return reverse('statuses_index')
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()

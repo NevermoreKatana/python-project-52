@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-
+from task_manager.mixins import CustomLoginRequiredMixin
 from django.http import HttpResponseRedirect
 
 
@@ -47,20 +47,15 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
 
-class UserDeleteView(LoginRequiredMixin, DeleteView):
+class UserDeleteView(CustomLoginRequiredMixin, DeleteView):
     model = User
     template_name = 'users/delete.html'
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
     def get_success_url(self):
         logout(self.request)
@@ -88,21 +83,16 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class UserUpdateView(LoginRequiredMixin, UpdateView):
+class UserUpdateView(CustomLoginRequiredMixin, UpdateView):
     model = User
     template_name = 'users/update.html'
     form_class = RegistrationForm
-    login_url = 'login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def handle_no_permission(self):
-        messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
-        rollbar.report_exc_info()
-        return super().handle_no_permission()
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
