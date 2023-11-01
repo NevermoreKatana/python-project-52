@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
-from task_manager.mixins import CustomLoginRequiredMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
 
 class IndexView(CustomLoginRequiredMixin, ListView):
     model = Tasks
@@ -39,18 +39,15 @@ class IndexView(CustomLoginRequiredMixin, ListView):
 
 
 
-class TasksCreateView(CustomLoginRequiredMixin, CreateView):
+class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     model = Tasks
     template_name = 'tasks/create.html'
     form_class = TaskForm
-
-    def get_success_url(self):
-        rollbar.report_exc_info()
-        return reverse('tasks_index')
+    success_message = 'Задача успешно создана'
+    success_url = 'tasks_index'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        messages.success(self.request, 'Задача успешно создана')
         rollbar.report_exc_info()
         return super().form_valid(form)
 
@@ -61,20 +58,17 @@ class TasksCreateView(CustomLoginRequiredMixin, CreateView):
         return context
 
 
-class TasksDeleteView(CustomLoginRequiredMixin, DeleteView):
+class TasksDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = Tasks
     template_name = 'tasks/delete.html'
     context_object_name = 'task'
+    success_message = 'Задача успешно удалена'
+    success_url = 'tasks_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
-    def get_success_url(self):
-        messages.success(self.request, 'Задача успешно удалена')
-        rollbar.report_exc_info()
-        return reverse('tasks_index')
 
     def dispatch(self, request, *args, **kwargs):
         task = self.get_object()
@@ -86,10 +80,13 @@ class TasksDeleteView(CustomLoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class UpdateTaskView(CustomLoginRequiredMixin, UpdateView):
+class UpdateTaskView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     model = Tasks
     template_name = 'tasks/update.html'
     form_class = TaskForm
+    success_message = 'Задача успешно изменена'
+    success_url = 'tasks_index'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
@@ -110,10 +107,6 @@ class UpdateTaskView(CustomLoginRequiredMixin, UpdateView):
         kwargs['initial'] = initial_data
         return kwargs
 
-    def get_success_url(self):
-        messages.success(self.request, 'Задача успешно изменена')
-        rollbar.report_exc_info()
-        return reverse('tasks_index')
 
 
 class TaskView(CustomLoginRequiredMixin, ListView):

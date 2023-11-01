@@ -1,7 +1,7 @@
 import rollbar
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-
+from django.shortcuts import reverse
 
 class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = 'login'
@@ -10,3 +10,10 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
         messages.error(self.request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
         rollbar.report_exc_info()
         return super().handle_no_permission()
+
+
+class GetSuccessUrlMixin:
+    def get_success_url(self):
+        messages.success(self.request, self.success_message)
+        rollbar.report_exc_info()
+        return reverse(self.success_url)
