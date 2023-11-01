@@ -26,7 +26,7 @@ class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView)
     template_name = 'labels/create.html'
     form_class = LabelForm
     success_message = 'Метка успешно создана'
-    success_url = 'labels_index'
+    custom_success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,7 +49,7 @@ class LabelsDeleteView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
     model = Labels
     template_name = 'labels/delete.html'
     success_message = 'Метка успешно удалена'
-    success_url = 'labels_index'
+    custom_success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,7 +62,7 @@ class LabelsUpdateView(CustomLoginRequiredMixin,GetSuccessUrlMixin, UpdateView):
     template_name = 'statuses/update.html'
     form_class = LabelForm
     success_message = 'Метка успешно изменена'
-    success_url = 'labels_index'
+    custom_success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
