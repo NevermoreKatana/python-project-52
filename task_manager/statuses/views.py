@@ -5,7 +5,7 @@ from task_manager.statuses.forms import StatusForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.shortcuts import reverse
-from task_manager.mixins import CustomLoginRequiredMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
 
 
 class IndexView(CustomLoginRequiredMixin, ListView):
@@ -19,27 +19,26 @@ class IndexView(CustomLoginRequiredMixin, ListView):
         return context
 
 
-class CreateStatusView(CustomLoginRequiredMixin, CreateView):
+class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     model = Status
     template_name = 'statuses/create.html'
     form_class = StatusForm
+    success_message = 'Статус успешно создан'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def get_success_url(self):
-        messages.success(self.request, 'Статус успешно создан')
-        rollbar.report_exc_info()
-        return reverse('statuses_index')
 
 
-
-class UpdateStatusView(CustomLoginRequiredMixin, UpdateView):
+class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     model = Status
     template_name = 'statuses/update.html'
     form_class = StatusForm
+    success_message = 'Статус успешно изменен'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,17 +62,13 @@ class UpdateStatusView(CustomLoginRequiredMixin, UpdateView):
         return kwargs
 
 
-class DeleteStatusView(CustomLoginRequiredMixin, DeleteView):
+class DeleteStatusView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
     model = Status
     template_name = 'statuses/delete.html'
+    success_message = 'Статус успешно удален'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
-    def get_success_url(self):
-        messages.success(self.request, 'Статус успешно удален')
-        rollbar.report_exc_info()
-        return reverse('statuses_index')
-

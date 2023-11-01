@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from task_manager.mixins import CustomLoginRequiredMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
 from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 
@@ -23,14 +23,12 @@ class UserView(ListView):
         return context
 
 
-class UserCreateView(CreateView):
+class UserCreateView(CreateView, GetSuccessUrlMixin):
     model = get_user_model()
     template_name = 'users/create.html'
     form_class = RegistrationForm
-
-    def get_success_url(self):
-        rollbar.report_exc_info()
-        return reverse('login')
+    success_message = ''
+    success_url = 'login'
 
     def form_valid(self, form):
         password = form.cleaned_data['password1']
@@ -47,21 +45,18 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
 
-class UserDeleteView(CustomLoginRequiredMixin, DeleteView):
+class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = get_user_model()
     template_name = 'users/delete.html'
+    success_message = 'Пользователь успешно удален'
+    success_url = 'users_index'
+    logout = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-
-    def get_success_url(self):
-        logout(self.request)
-        messages.success(self.request, 'Пользователь успешно удален')
-        rollbar.report_exc_info()
-        return reverse('users_index')
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
@@ -83,10 +78,13 @@ class UserDeleteView(CustomLoginRequiredMixin, DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class UserUpdateView(CustomLoginRequiredMixin, UpdateView):
+class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     model = get_user_model()
     template_name = 'users/update.html'
     form_class = RegistrationForm
+    success_message = 'Пользователь успешно изменен'
+    success_url = 'users_index'
+    logout = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -114,9 +112,3 @@ class UserUpdateView(CustomLoginRequiredMixin, UpdateView):
         rollbar.report_exc_info()
         form.instance.password = make_password(password)
         return super().form_valid(form)
-
-    def get_success_url(self):
-        logout(self.request)
-        messages.success(self.request, 'Пользователь успешно изменен')
-        rollbar.report_exc_info()
-        return reverse('users_index')

@@ -6,7 +6,7 @@ from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
-from task_manager.mixins import CustomLoginRequiredMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
 
 
 class LabelsView(CustomLoginRequiredMixin, ListView):
@@ -21,20 +21,17 @@ class LabelsView(CustomLoginRequiredMixin, ListView):
 
 
 
-class LabelsCreateView(CustomLoginRequiredMixin, CreateView):
+class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     model = Labels
     template_name = 'labels/create.html'
     form_class = LabelForm
+    success_message = 'Метка успешно создана'
+    success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
-    def get_success_url(self):
-        messages.success(self.request, 'Метка успешно создана')
-        rollbar.report_exc_info()
-        return reverse('labels_index')
 
 
     def post(self, request, *args, **kwargs):
@@ -48,36 +45,29 @@ class LabelsCreateView(CustomLoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
-class LabelsDeleteView(CustomLoginRequiredMixin, DeleteView):
+class LabelsDeleteView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
     model = Labels
     template_name = 'labels/delete.html'
+    success_message = 'Метка успешно удалена'
+    success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def get_success_url(self):
-        messages.success(self.request, 'Метка успешно удалена')
-        rollbar.report_exc_info()
-        return reverse('labels_index')
 
-
-
-class LabelsUpdateView(CustomLoginRequiredMixin, UpdateView):
+class LabelsUpdateView(CustomLoginRequiredMixin,GetSuccessUrlMixin, UpdateView):
     model = Labels
     template_name = 'statuses/update.html'
     form_class = LabelForm
+    success_message = 'Метка успешно изменена'
+    success_url = 'labels_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
-    def get_success_url(self):
-        messages.success(self.request, 'Метка успешно изменена')
-        rollbar.report_exc_info()
-        return reverse('labels_index')
 
 
     def get_form_kwargs(self):
