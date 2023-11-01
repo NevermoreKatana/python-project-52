@@ -28,7 +28,7 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     template_name = 'users/create.html'
     form_class = RegistrationForm
     success_message = ''
-    custom_success_url = 'login'
+    success_url = '/login/'
 
 
     def form_valid(self, form):
@@ -50,7 +50,7 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = get_user_model()
     template_name = 'users/delete.html'
     success_message = 'Пользователь успешно удален'
-    custom_success_url = 'users_index'
+    success_url = '/users/'
     logout = True
 
     def get_context_data(self, **kwargs):
@@ -84,7 +84,7 @@ class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     template_name = 'users/update.html'
     form_class = RegistrationForm
     success_message = 'Пользователь успешно изменен'
-    custom_success_url = 'users_index'
+    success_url = 'users_index'
     logout = True
 
     def get_context_data(self, **kwargs):
@@ -112,4 +112,4 @@ class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
             return self.form_invalid(form)
         rollbar.report_exc_info()
         form.instance.password = make_password(password)
-        return super().form_valid(form)
+        return super().get_success_url()

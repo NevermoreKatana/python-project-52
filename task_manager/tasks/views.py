@@ -44,7 +44,7 @@ class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     template_name = 'tasks/create.html'
     form_class = TaskForm
     success_message = 'Задача успешно создана'
-    custom_success_url = 'tasks_index'
+    success_url = 'tasks_index'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -63,7 +63,7 @@ class TasksDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     template_name = 'tasks/delete.html'
     context_object_name = 'task'
     success_message = 'Задача успешно удалена'
-    custom_success_url = 'tasks_index'
+    success_url = 'tasks_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -85,7 +85,7 @@ class UpdateTaskView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     template_name = 'tasks/update.html'
     form_class = TaskForm
     success_message = 'Задача успешно изменена'
-    custom_success_url = 'tasks_index'
+    success_url = 'tasks_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

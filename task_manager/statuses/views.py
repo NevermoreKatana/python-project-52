@@ -24,7 +24,7 @@ class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView)
     template_name = 'statuses/create.html'
     form_class = StatusForm
     success_message = 'Статус успешно создан'
-    custom_success_url = 'statuses_index'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,7 +38,7 @@ class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView)
     template_name = 'statuses/update.html'
     form_class = StatusForm
     success_message = 'Статус успешно изменен'
-    custom_success_url = 'statuses_index'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -61,7 +61,7 @@ class DeleteStatusView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
     model = Status
     template_name = 'statuses/delete.html'
     success_message = 'Статус успешно удален'
-    custom_success_url = 'statuses_index'
+    success_url = 'statuses_index'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
