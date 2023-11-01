@@ -28,7 +28,8 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     template_name = 'users/create.html'
     form_class = RegistrationForm
     success_message = ''
-    success_url = 'login'
+    success_url = '/login/'
+
 
     def form_valid(self, form):
         password = form.cleaned_data['password1']

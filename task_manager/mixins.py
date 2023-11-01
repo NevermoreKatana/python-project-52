@@ -5,6 +5,7 @@ from django.shortcuts import reverse
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 
+
 class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = 'login'
 
@@ -16,6 +17,8 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
 
 class GetSuccessUrlMixin:
     logout = False
+
+
     def get_success_url(self):
         if self.logout:
             logout(self.request)

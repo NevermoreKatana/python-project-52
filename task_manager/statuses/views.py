@@ -45,11 +45,6 @@ class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-    def get_success_url(self):
-        messages.success(self.request, 'Статус успешно изменен')
-        rollbar.report_exc_info()
-        return reverse('statuses_index')
-
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
