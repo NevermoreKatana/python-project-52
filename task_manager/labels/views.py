@@ -3,7 +3,6 @@ from task_manager.labels.models import Labels
 import rollbar
 from task_manager.labels.forms import LabelForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
@@ -20,7 +19,6 @@ class LabelsView(CustomLoginRequiredMixin, ListView):
         return context
 
 
-
 class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     model = Labels
     template_name = 'labels/create.html'
@@ -33,7 +31,6 @@ class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
 
-
     def post(self, request, *args, **kwargs):
         name = self.request.POST.get('name')
 
@@ -45,7 +42,7 @@ class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView)
         return super().post(request, *args, **kwargs)
 
 
-class LabelsDeleteView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
+class LabelsDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
     model = Labels
     template_name = 'labels/delete.html'
     success_message = 'Метка успешно удалена'
@@ -57,7 +54,7 @@ class LabelsDeleteView(CustomLoginRequiredMixin,GetSuccessUrlMixin, DeleteView):
         return context
 
 
-class LabelsUpdateView(CustomLoginRequiredMixin,GetSuccessUrlMixin, UpdateView):
+class LabelsUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     model = Labels
     template_name = 'statuses/update.html'
     form_class = LabelForm
@@ -68,7 +65,6 @@ class LabelsUpdateView(CustomLoginRequiredMixin,GetSuccessUrlMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

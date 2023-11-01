@@ -1,16 +1,14 @@
-from django.contrib.auth.models import User
-from django.contrib.auth import logout
 from task_manager.tasks.models import Tasks
 import rollbar
 from task_manager.users.forms import RegistrationForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
 from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
+
 
 class UserView(ListView):
     model = get_user_model()
@@ -29,7 +27,6 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     form_class = RegistrationForm
     success_message = ''
     success_url = '/login/'
-
 
     def form_valid(self, form):
         password = form.cleaned_data['password1']
@@ -57,7 +54,6 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['is_session_active'] = 'user_id' in self.request.session
         return context
-
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()

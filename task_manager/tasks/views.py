@@ -3,10 +3,10 @@ from task_manager.tasks.models import Tasks
 import rollbar
 from task_manager.tasks.forms import TaskForm, TaskFilterForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
+
 
 class IndexView(CustomLoginRequiredMixin, ListView):
     model = Tasks
@@ -38,7 +38,6 @@ class IndexView(CustomLoginRequiredMixin, ListView):
         return queryset
 
 
-
 class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
     model = Tasks
     template_name = 'tasks/create.html'
@@ -50,7 +49,6 @@ class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
         form.instance.author = self.request.user
         rollbar.report_exc_info()
         return super().form_valid(form)
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -106,7 +104,6 @@ class UpdateTaskView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
 
         kwargs['initial'] = initial_data
         return kwargs
-
 
 
 class TaskView(CustomLoginRequiredMixin, ListView):
