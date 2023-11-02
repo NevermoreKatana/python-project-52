@@ -1,6 +1,6 @@
 from task_manager.tasks.models import Tasks
 import rollbar
-from task_manager.users.forms import RegistrationForm
+from task_manager.users.forms import UserCreationForm, RegistrationForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.shortcuts import reverse
 from django.contrib import messages
@@ -24,23 +24,9 @@ class UserView(ListView):
 class UserCreateView(CreateView, GetSuccessUrlMixin):
     model = get_user_model()
     template_name = 'users/create.html'
-    form_class = RegistrationForm
+    form_class = UserCreationForm
     success_message = ''
     success_url = '/login/'
-
-    def form_valid(self, form):
-        password = form.cleaned_data['password1']
-        password_confirm = form.cleaned_data['password2']
-
-        if password != password_confirm:
-            messages.error(self.request, "Пароль и подтверждение пароля не совпадают.")
-            rollbar.report_exc_info()
-            return self.form_invalid(form)
-
-        form.instance.password = make_password(password)
-        messages.success(self.request, 'Пользователь успешно зарегистрирован')
-        rollbar.report_exc_info()
-        return super().form_valid(form)
 
 
 class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
