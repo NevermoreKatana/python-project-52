@@ -5,6 +5,7 @@ from django.contrib import messages
 import rollbar
 from task_manager.forms import LoginForm
 from task_manager import services
+from django.shortcuts import redirect
 
 
 class IndexView(View):
@@ -26,7 +27,8 @@ class LoginView(View):
     def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
         if services.login_user(form, request):
-            return services.handle_success(request, 'Вы залогинены', 'main')
+            services.handle_success(request, 'Вы залогинены')
+            return redirect('main')
         initial_data = services.initial_login_data(form)
         form = LoginForm(initial_data, is_valid=True)
 
@@ -40,4 +42,5 @@ class LogoutView(View):
 
     def post(self, request, *args, **kwargs):
         logout(request)
-        return services.handle_info(request, 'Вы разлогинены', 'main')
+        services.handle_info(request, 'Вы разлогинены')
+        return redirect('main')
