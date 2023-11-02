@@ -10,7 +10,7 @@ def handle_error(request, message, report_exception=True):
     messages.error(request, message)
 
 
-def handle_success(request, message,report_exception=True):
+def handle_success(request, message, report_exception=True):
     if report_exception:
         rollbar.report_exc_info()
     messages.success(request, message)
