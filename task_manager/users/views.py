@@ -25,7 +25,6 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     model = get_user_model()
     template_name = 'users/create.html'
     form_class = UserCreationForm
-    success_message = ''
     success_url = '/login/'
     success_message = 'Пользователь успешно зарегистрирован'
 
