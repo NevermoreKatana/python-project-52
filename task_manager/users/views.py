@@ -3,6 +3,7 @@ import rollbar
 from task_manager.users.forms import UserCreationForm, RegistrationForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.shortcuts import reverse
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
@@ -25,8 +26,13 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     model = get_user_model()
     template_name = 'users/create.html'
     form_class = UserCreationForm
-    success_url = '/login/'
-    success_message = 'Пользователь успешно зарегистрирован'
+    success_message = ''
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Пользователь успешно зарегистрирован.')
+        return response
 
 
 class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
