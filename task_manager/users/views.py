@@ -1,6 +1,6 @@
 from task_manager.tasks.models import Tasks
 import rollbar
-from task_manager.users.forms import UserCreationForm, RegistrationForm
+from task_manager.users.forms import UserCreationForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.shortcuts import reverse
 from django.urls import reverse_lazy
@@ -70,7 +70,7 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
 class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
     model = get_user_model()
     template_name = 'users/update.html'
-    form_class = RegistrationForm
+    form_class = UserCreationForm
     success_message = 'Пользователь успешно изменен'
     success_url = 'users_index'
     logout = True
