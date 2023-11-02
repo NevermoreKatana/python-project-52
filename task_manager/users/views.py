@@ -27,6 +27,7 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
     form_class = UserCreationForm
     success_message = ''
     success_url = '/login/'
+    success_message = 'Пользователь успешно зарегистрирован'
 
 
 class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
