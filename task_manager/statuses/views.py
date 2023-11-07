@@ -10,7 +10,10 @@ class IndexView(CustomLoginRequiredMixin, ListView, GetContextDataMixin):
     context_object_name = 'statuses'
 
 
-class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView, GetContextDataMixin):
+class CreateStatusView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       CreateView,
+                       GetContextDataMixin):
     model = Status
     template_name = 'statuses/create.html'
     form_class = StatusForm
@@ -18,13 +21,15 @@ class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView,
     success_url = 'statuses_index'
 
 
-class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView, GetContextDataMixin):
+class UpdateStatusView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       UpdateView,
+                       GetContextDataMixin):
     model = Status
     template_name = 'statuses/update.html'
     form_class = StatusForm
     success_message = 'Статус успешно изменен'
     success_url = 'statuses_index'
-
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -37,7 +42,10 @@ class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView,
         return kwargs
 
 
-class DeleteStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, GetContextDataMixin):
+class DeleteStatusView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       DeleteView,
+                       GetContextDataMixin):
     model = Status
     template_name = 'statuses/delete.html'
     success_message = 'Статус успешно удален'

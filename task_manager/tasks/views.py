@@ -38,7 +38,10 @@ class IndexView(CustomLoginRequiredMixin, ListView):
         return queryset
 
 
-class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView, GetContextDataMixin):
+class TasksCreateView(CustomLoginRequiredMixin,
+                      GetSuccessUrlMixin,
+                      CreateView,
+                      GetContextDataMixin):
     model = Tasks
     template_name = 'tasks/create.html'
     form_class = TaskForm
@@ -51,7 +54,10 @@ class TasksCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView, 
         return super().form_valid(form)
 
 
-class TasksDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, GetContextDataMixin):
+class TasksDeleteView(CustomLoginRequiredMixin,
+                      GetSuccessUrlMixin,
+                      DeleteView,
+                      GetContextDataMixin):
     model = Tasks
     template_name = 'tasks/delete.html'
     context_object_name = 'task'
@@ -68,13 +74,15 @@ class TasksDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, 
         return super().dispatch(request, *args, **kwargs)
 
 
-class UpdateTaskView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView, GetContextDataMixin):
+class UpdateTaskView(CustomLoginRequiredMixin,
+                     GetSuccessUrlMixin,
+                     UpdateView,
+                     GetContextDataMixin):
     model = Tasks
     template_name = 'tasks/update.html'
     form_class = TaskForm
     success_message = 'Задача успешно изменена'
     success_url = 'tasks_index'
-
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

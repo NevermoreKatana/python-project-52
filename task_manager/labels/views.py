@@ -14,7 +14,10 @@ class LabelsView(CustomLoginRequiredMixin, ListView, GetContextDataMixin):
     context_object_name = 'labels'
 
 
-class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView, GetContextDataMixin):
+class LabelsCreateView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       CreateView,
+                       GetContextDataMixin):
     model = Labels
     template_name = 'labels/create.html'
     form_class = LabelForm
@@ -32,14 +35,20 @@ class LabelsCreateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView,
         return super().post(request, *args, **kwargs)
 
 
-class LabelsDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, GetContextDataMixin):
+class LabelsDeleteView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       DeleteView,
+                       GetContextDataMixin):
     model = Labels
     template_name = 'labels/delete.html'
     success_message = 'Метка успешно удалена'
     success_url = 'labels_index'
 
 
-class LabelsUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView, GetContextDataMixin):
+class LabelsUpdateView(CustomLoginRequiredMixin,
+                       GetSuccessUrlMixin,
+                       UpdateView,
+                       GetContextDataMixin):
     model = Labels
     template_name = 'statuses/update.html'
     form_class = LabelForm
