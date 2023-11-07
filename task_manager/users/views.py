@@ -6,20 +6,15 @@ from django.shortcuts import reverse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin, GetContextDataMixin
 from django.http import HttpResponseRedirect
 from django.contrib.auth import get_user_model
 
 
-class UserView(ListView):
+class UserView(ListView, GetContextDataMixin):
     model = get_user_model()
     template_name = 'users/index.html'
     context_object_name = 'users'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
 
 class UserCreateView(CreateView, GetSuccessUrlMixin):
@@ -35,17 +30,12 @@ class UserCreateView(CreateView, GetSuccessUrlMixin):
         return response
 
 
-class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
+class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, GetContextDataMixin):
     model = get_user_model()
     template_name = 'users/delete.html'
     success_message = 'Пользователь успешно удален'
     success_url = 'users_index'
     logout = True
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
@@ -67,18 +57,13 @@ class UserDeleteView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
+class UserUpdateView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView, GetContextDataMixin):
     model = get_user_model()
     template_name = 'users/update.html'
     form_class = UserCreationForm
     success_message = 'Пользователь успешно изменен'
     success_url = 'users_index'
     logout = True
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
     def dispatch(self, request, *args, **kwargs):
         user = self.get_object()

@@ -23,3 +23,10 @@ class GetSuccessUrlMixin:
         messages.success(self.request, self.success_message)
         rollbar.report_exc_info()
         return reverse(self.success_url)
+
+
+class GetContextDataMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_session_active'] = 'user_id' in self.request.session
+        return context

@@ -1,44 +1,30 @@
 from task_manager.statuses.models import Status
 from task_manager.statuses.forms import StatusForm
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
-from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin
+from task_manager.mixins import CustomLoginRequiredMixin, GetSuccessUrlMixin, GetContextDataMixin
 
 
-class IndexView(CustomLoginRequiredMixin, ListView):
+class IndexView(CustomLoginRequiredMixin, ListView, GetContextDataMixin):
     model = Status
     template_name = 'statuses/index.html'
     context_object_name = 'statuses'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
-
-class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView):
+class CreateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, CreateView, GetContextDataMixin):
     model = Status
     template_name = 'statuses/create.html'
     form_class = StatusForm
     success_message = 'Статус успешно создан'
     success_url = 'statuses_index'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
-
-class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView):
+class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView, GetContextDataMixin):
     model = Status
     template_name = 'statuses/update.html'
     form_class = StatusForm
     success_message = 'Статус успешно изменен'
     success_url = 'statuses_index'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -51,13 +37,8 @@ class UpdateStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, UpdateView)
         return kwargs
 
 
-class DeleteStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView):
+class DeleteStatusView(CustomLoginRequiredMixin, GetSuccessUrlMixin, DeleteView, GetContextDataMixin):
     model = Status
     template_name = 'statuses/delete.html'
     success_message = 'Статус успешно удален'
     success_url = 'statuses_index'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_session_active'] = 'user_id' in self.request.session
-        return context
